@@ -1,4 +1,5 @@
 ﻿using Jump.Attributes;
+using Jump.Attributes.Components;
 using JumpDemo.Repositories;
 
 namespace JumpDemo.Managers;

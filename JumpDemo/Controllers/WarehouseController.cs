@@ -1,4 +1,4 @@
-﻿using Jump.Attributes.Controllers;
+﻿using Jump.Attributes.Components.Controllers;
 using JumpDemo.Managers;
 
 namespace JumpDemo.Controllers;

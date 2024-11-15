@@ -1,3 +1,3 @@
 ﻿using Jump;
 
-JumpApplication.Run(typeof(Program));
+await JumpApplication.Run(typeof(Program));

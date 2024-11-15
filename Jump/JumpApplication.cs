@@ -1,14 +1,17 @@
-﻿namespace Jump;
+﻿using Jump.Attributes.Components.Controllers;
+using Jump.Listeners;
+
+namespace Jump;
 
 public static class JumpApplication
 {
 
     private static readonly ComponentStore ComponentStore = ComponentStore.Instance;
     
-    public static void Run(Type primarySource)
+    public static async Task Run(Type primarySource)
     {
         OrderComponents(primarySource);
-        
+        await RegisterListeners();
     }
 
     private static void OrderComponents(Type primarySource)
@@ -43,6 +46,29 @@ public static class JumpApplication
         }
         
     }
-    
+
+    private static async Task RegisterListeners()
+    {
+        var components = ComponentStore.GetComponents();
+        List<Task> tasks = new();
+        
+        foreach (var kvp in components.AsParallel())
+        {
+            switch (kvp.Key)
+            {
+                case { } type 
+                    when type == typeof(KeyboardController):
+                    Console.WriteLine("Registering keyboard controllers");
+                    foreach (var controller in kvp.Value)
+                    {
+                        var constructor = controller.GetConstructors()[0];
+                        var keyboardController = constructor.Invoke(null);
+                        tasks.Add(KeyBoardListener.StartKeyListening(keyboardController));
+                    }
+                    break;
+            }
+        }
+        await Task.WhenAll(tasks);
+    }
     
 }

@@ -1,5 +1,3 @@
 ﻿namespace Jump.Attributes.Components;
 
-public class Repository : Component
-{
-}
+public class Repository : Component;

@@ -1,4 +1,5 @@
-﻿using Jump.Attributes.Components.Controllers;
+﻿using Jump.Attributes.Components;
+using Jump.Attributes.Components.Controllers;
 using Jump.Listeners;
 
 namespace Jump;
@@ -18,7 +19,7 @@ public static class JumpApplication
     {
         var components = primarySource.Assembly
             .DefinedTypes
-            .Where(t => t.CustomAttributes.Any(attr => Utility.InheritsFromComponent(attr.AttributeType)));
+            .Where(t => t.CustomAttributes.Any(attr => Utility.InheritsFromAttribute(attr.AttributeType, typeof(Component))));
 
         foreach (var component in components)
         {
@@ -35,22 +36,12 @@ public static class JumpApplication
             }
         }
         
-        foreach (var kvp in ComponentStore.GetConstructors())
-        {
-            Console.WriteLine($"Component: {kvp.Key.Name}");
-
-            foreach (var constructor in kvp.Value)
-            {
-                Console.WriteLine($"\t- Constructor: {constructor}");
-            }
-        }
-        
     }
 
     private static async Task RegisterListeners()
     {
         var components = ComponentStore.GetComponents();
-        List<Task> tasks = new();
+        List<Task> tasks = [];
         
         foreach (var kvp in components.AsParallel())
         {
@@ -58,17 +49,17 @@ public static class JumpApplication
             {
                 case { } type 
                     when type == typeof(KeyboardController):
-                    Console.WriteLine("Registering keyboard controllers");
-                    foreach (var controller in kvp.Value)
-                    {
-                        var constructor = controller.GetConstructors()[0];
-                        var keyboardController = constructor.Invoke(null);
-                        tasks.Add(KeyBoardListener.StartKeyListening(keyboardController));
-                    }
+                    tasks.AddRange(KeyBoardListener.RegisterKeyboardControllers(kvp.Value));
+                    break;
+                case { } type 
+                    when type == typeof(RestController):
+                    tasks.AddRange(RestListener.RegisterRestControllers(kvp.Value));
                     break;
             }
         }
         await Task.WhenAll(tasks);
     }
+
+    
     
 }

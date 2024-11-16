@@ -1,18 +1,20 @@
-﻿using Jump.Attributes;
-using Jump.Attributes.Components;
+﻿using Jump.Attributes.Components;
+using JumpDemo.Domain;
 using JumpDemo.Repositories;
 
 namespace JumpDemo.Managers;
 
 [Service]
-public class WarehouseManager
+public class WarehouseManager(WarehouseRepo repo)
 {
-
-    private readonly WarehouseRepo _repo;
-
-    public WarehouseManager(WarehouseRepo repo)
+    public IEnumerable<Warehouse> GetWarehouses()
     {
-        _repo = repo;
+        return repo.ReadWarehouses();
+    }
+
+    public Warehouse GetWarehouseById(int id)
+    {
+        return repo.ReadWarehouseById(id);
     }
     
 }

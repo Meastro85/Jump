@@ -20,7 +20,7 @@ public static class KeyBoardListener
         return actions;
     }
     
-    public static async Task StartKeyListening(object keyboardController)
+    private static async Task StartKeyListening(object keyboardController)
     {
         Dictionary<ConsoleKey, Action> keyMappings = RegisterKeyboardController(keyboardController);
         
@@ -38,4 +38,16 @@ public static class KeyBoardListener
             }
         });
     }
+    
+    public static IEnumerable<Task> RegisterKeyboardControllers(ICollection<Type> controllers)
+    {
+        Console.WriteLine("Registering keyboard controllers");
+        foreach (var controller in controllers)
+        {
+            var constructor = controller.GetConstructors()[0];
+            var keyboardController = constructor.Invoke(null);
+            yield return StartKeyListening(keyboardController);
+        }
+    }
+    
 }

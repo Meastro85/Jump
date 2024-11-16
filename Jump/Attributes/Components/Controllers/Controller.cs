@@ -1,6 +1,3 @@
 ﻿namespace Jump.Attributes.Components.Controllers;
 
-public class Controller : Component
-{
-    
-}
+public abstract class Controller : Component;

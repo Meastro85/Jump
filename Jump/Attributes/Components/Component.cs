@@ -1,7 +1,4 @@
 ﻿namespace Jump.Attributes.Components;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class Component : Bean
-{
-    
-}
+public class Component : Attribute;

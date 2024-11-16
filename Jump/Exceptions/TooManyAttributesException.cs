@@ -1,13 +1,3 @@
 ﻿namespace Jump.Exceptions;
 
-public class TooManyAttributesException : Exception
-{
-    public TooManyAttributesException()
-    {
-    }
-
-    public TooManyAttributesException(string message) : base(message)
-    {
-    }
-    
-}
+public class TooManyAttributesException(string message) : Exception(message);

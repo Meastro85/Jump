@@ -1,5 +1,3 @@
 ﻿namespace Jump.Attributes.Components.Controllers;
 
-public class ConsoleController : Controller
-{
-}
+public class RestController : Controller;

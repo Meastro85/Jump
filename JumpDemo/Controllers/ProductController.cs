@@ -3,15 +3,9 @@ using JumpDemo.Managers;
 
 namespace JumpDemo.Controllers;
 
-[ConsoleController]
-public class ProductController
+[RestController]
+public class ProductController(ProductManager manager)
 {
 
-    private readonly ProductManager _manager;
-
-    public ProductController(ProductManager manager)
-    {
-        _manager = manager;
-    }
-
+    private readonly ProductManager _manager = manager;
 }

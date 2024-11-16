@@ -1,6 +1,3 @@
 ﻿namespace Jump.Attributes.Components.Controllers;
 
-public class KeyboardController : Controller
-{
-    
-}
+public class KeyboardController : Controller;

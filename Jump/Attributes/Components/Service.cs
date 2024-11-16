@@ -1,5 +1,3 @@
 ﻿namespace Jump.Attributes.Components;
 
-public class Service : Component
-{
-}
+public class Service : Component;

@@ -1,14 +1,12 @@
-﻿using Jump.Attributes.Components;
-
-namespace Jump;
+﻿namespace Jump;
 
 public static class Utility
 {
-    public static bool InheritsFromComponent(Type attributeType)
+    public static bool InheritsFromAttribute(Type attributeType, Type inheritedAttributeType)
     {
         while (attributeType != null && attributeType != typeof(object))
         {
-            if (attributeType == typeof(Component))
+            if (attributeType == inheritedAttributeType)
                 return true;
 
             if (attributeType.BaseType != null) attributeType = attributeType.BaseType;

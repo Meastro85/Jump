@@ -1,6 +1,7 @@
 ﻿using Jump.Attributes.Components;
 using Jump.Attributes.Components.Controllers;
 using Jump.Listeners;
+using Jump.Providers;
 
 namespace Jump;
 

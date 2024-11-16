@@ -3,7 +3,7 @@ using Jump.Attributes.Actions;
 
 namespace Jump.Listeners;
 
-public static class KeyBoardListener
+internal static class KeyBoardListener
 {
     
     private static Dictionary<ConsoleKey, Action> RegisterKeyboardController(object keyboardController)
@@ -39,7 +39,7 @@ public static class KeyBoardListener
         });
     }
     
-    public static IEnumerable<Task> RegisterKeyboardControllers(ICollection<Type> controllers)
+    internal static IEnumerable<Task> RegisterKeyboardControllers(ICollection<Type> controllers)
     {
         Console.WriteLine("Registering keyboard controllers");
         foreach (var controller in controllers)

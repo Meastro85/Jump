@@ -1,8 +1,8 @@
 ﻿namespace Jump;
 
-public static class Utility
+internal static class Utility
 {
-    public static bool InheritsFromAttribute(Type attributeType, Type inheritedAttributeType)
+    internal static bool InheritsFromAttribute(Type attributeType, Type inheritedAttributeType)
     {
         while (attributeType != null && attributeType != typeof(object))
         {

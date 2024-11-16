@@ -1,17 +1,16 @@
-﻿using System.Reflection;
-using Jump.Attributes.Components;
+﻿using Jump.Attributes.Components;
 using Jump.Exceptions;
 
-namespace Jump;
+namespace Jump.Providers;
 
-public sealed class ComponentStore
+internal sealed class ComponentStore
 {
 
     private static ComponentStore? _instance;
     private static readonly object Padlock = new();
-    private readonly IDictionary<Type, ICollection<Type>> _components = new Dictionary<Type, ICollection<Type>>();
+    private readonly Dictionary<Type, ICollection<Type>> _components = new();
 
-    public static ComponentStore Instance
+    internal static ComponentStore Instance
     {
         get
         {
@@ -22,7 +21,7 @@ public sealed class ComponentStore
         }
     }
     
-    public void AddComponent(Type component)
+    internal void AddComponent(Type component)
     {
         var attributeData = component.CustomAttributes
             .Where(attr => Utility.InheritsFromAttribute(attr.AttributeType, typeof(Component)))
@@ -38,7 +37,7 @@ public sealed class ComponentStore
         else _components.Add(componentType, [component]);
     }
 
-    public IDictionary<Type, ICollection<Type>> GetComponents()
+    internal IDictionary<Type, ICollection<Type>> GetComponents()
     {
         return _components;
     }

@@ -4,7 +4,7 @@ using static System.Text.RegularExpressions.Regex;
 
 namespace Jump.Listeners;
 
-public class RestListener
+internal static class RestListener
 {
     private static Dictionary<string, MethodInfo> RegisterRestController(object controller)
     {
@@ -53,7 +53,7 @@ public class RestListener
         });
     }
 
-    public static IEnumerable<Task> RegisterRestControllers(ICollection<Type> controllers)
+    internal static IEnumerable<Task> RegisterRestControllers(ICollection<Type> controllers)
     {
         Console.WriteLine("Registering REST controllers");
         foreach (var controller in controllers)

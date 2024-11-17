@@ -28,7 +28,7 @@ internal sealed class ComponentStore
             .Where(attr => Utility.InheritsFromAttribute(attr.AttributeType, typeof(Component)))
             .ToList();
         
-        bool isSingleton = component.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton));
+        var isSingleton = component.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton));
         
         if(componentAttributes.Count > 1) throw new TooManyAttributesException("Multiple component attributes on a single class is not allowed");
             

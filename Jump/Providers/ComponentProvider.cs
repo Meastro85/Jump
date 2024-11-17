@@ -4,6 +4,10 @@ using Jump.Exceptions;
 
 namespace Jump.Providers;
 
+/// <summary>
+/// Class <c>ComponentProvider</c> is a provider for components.
+/// You can use this to get a component from the store.
+/// </summary>
 public sealed class ComponentProvider
 {
 
@@ -22,6 +26,11 @@ public sealed class ComponentProvider
         }
     }
     
+    /// <summary>
+    /// This method gets creates an instance of a component, or a singleton if it exists.
+    /// </summary>
+    /// <param name="componentType">The type of the component you want to get.</param>
+    /// <returns>Your requested component.</returns>
     public object GetComponent(Type componentType)
     {
         return componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton)) 

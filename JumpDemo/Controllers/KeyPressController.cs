@@ -8,15 +8,8 @@ public class KeyPressController
 {
 
     [KeyAction(ConsoleKey.A)]
-    public void onKeyA()
+    public void OnKeyA()
     {
         Console.WriteLine("Key A pressed");
-    }
-
-    [KeyAction(ConsoleKey.Escape)]
-    public void onEscape()
-    {
-        Console.WriteLine("Exiting appliction...");
-        Environment.Exit(0);
     }
 }

@@ -1,4 +1,8 @@
-﻿namespace Jump.Providers;
+﻿using System.Reflection;
+using Jump.Attributes.Components;
+using Jump.Exceptions;
+
+namespace Jump.Providers;
 
 public sealed class ComponentProvider
 {
@@ -20,9 +24,38 @@ public sealed class ComponentProvider
     
     public object GetComponent(Type componentType)
     {
-        return _components[componentType];
+        return componentType.CustomAttributes.Any(attr => attr.GetType() == typeof(Singleton)) 
+            ? _components[componentType] : CreateInstance(componentType);
     }
 
+    private object CreateInstance(Type type)
+    {
+        var constructor = GetConstructor(type);
+
+        var parameters = constructor.GetParameters()
+            .Select(p => GetComponent(p.ParameterType))
+            .ToArray();
+
+        return constructor.Invoke(parameters);
+    }
+
+    private ConstructorInfo GetConstructor(Type type)
+    {
+        var constructors = type.GetConstructors();
+        var sortedConstructors = constructors.OrderByDescending(c => c.GetParameters().Length)
+            .ToList();
+        
+        if (sortedConstructors.Count > 1 && sortedConstructors[0].GetParameters().Length ==
+            sortedConstructors[1].GetParameters().Length)
+            throw new AmbiguousMatchException($"Type ${type.Name} has multiple valid constructors.");
+
+        var constructor = sortedConstructors.FirstOrDefault();
+        
+        if(constructor == null) throw new InvalidComponentException("No valid constructors found for " + type.Name);
+
+        return constructor;
+    }
+    
     internal void AddComponent(object component)
     {
         
@@ -30,7 +63,10 @@ public sealed class ComponentProvider
 
     internal void AddComponents(ICollection<Type> components)
     {
-        
+        foreach (var componentType in components)
+        {
+            
+        }
     }
     
 }

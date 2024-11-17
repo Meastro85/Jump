@@ -50,11 +50,11 @@ public static class JumpApplication
             {
                 case { } type 
                     when type == typeof(KeyboardController):
-                    tasks.AddRange(KeyBoardListener.RegisterKeyboardControllers(kvp.Value));
+                    tasks.Add(KeyBoardListener.RegisterKeyboardControllers(kvp.Value));
                     break;
                 case { } type 
                     when type == typeof(RestController):
-                    tasks.AddRange(RestListener.RegisterRestControllers(kvp.Value));
+                    tasks.Add(RestListener.RegisterRestControllers(kvp.Value));
                     break;
             }
         }

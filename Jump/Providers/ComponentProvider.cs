@@ -24,7 +24,7 @@ public sealed class ComponentProvider
     
     public object GetComponent(Type componentType)
     {
-        return componentType.CustomAttributes.Any(attr => attr.GetType() == typeof(Singleton)) 
+        return componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton)) 
             ? _components[componentType] : CreateInstance(componentType);
     }
 
@@ -56,16 +56,18 @@ public sealed class ComponentProvider
         return constructor;
     }
     
-    internal void AddComponent(object component)
+    private void AddSingleton(object component)
     {
-        
+        if(_components.ContainsKey(component.GetType())) return;
+        _components.Add(component.GetType(), component);
     }
 
-    internal void AddComponents(ICollection<Type> components)
+    internal void AddSingletons(ICollection<Type> components)
     {
         foreach (var componentType in components)
         {
-            
+            var component = CreateInstance(componentType);
+            AddSingleton(component);
         }
     }
     

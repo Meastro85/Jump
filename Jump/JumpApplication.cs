@@ -9,10 +9,12 @@ public static class JumpApplication
 {
 
     private static readonly ComponentStore ComponentStore = ComponentStore.Instance;
+    private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
     
     public static async Task Run(Type primarySource)
     {
         OrderComponents(primarySource);
+        RegisterSingletons();
         await RegisterListeners();
     }
 
@@ -27,18 +29,14 @@ public static class JumpApplication
             ComponentStore.AddComponent(component);
         }
         
-        foreach (var kvp in ComponentStore.GetComponents())
-        {
-            Console.WriteLine($"Component: {kvp.Key.Name}");
-
-            foreach (var type in kvp.Value)
-            {
-                Console.WriteLine($"\t- {type.Name}");
-            }
-        }
-        
     }
 
+    private static void RegisterSingletons()
+    {
+        var singletons = ComponentStore.GetSingletons();
+        ComponentProvider.AddSingletons(singletons);
+    }
+    
     private static async Task RegisterListeners()
     {
         var components = ComponentStore.GetComponents();

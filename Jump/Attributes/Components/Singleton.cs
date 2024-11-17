@@ -1,6 +1,4 @@
 ﻿namespace Jump.Attributes.Components;
 
-public class Singleton : Attribute
-{
-    
-}
+[AttributeUsage(AttributeTargets.Class)]
+public class Singleton : Attribute;

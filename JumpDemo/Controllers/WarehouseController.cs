@@ -25,5 +25,14 @@ public class WarehouseController(WarehouseManager manager)
         Console.Write($"Warehouse: {warehouse.Name}\n" +
                       $"Address: {warehouse.Address}\n");
     }
+
+    [Route("/warehouse/{id}/{name}/{address}")]
+    public void CreateWarehouse(int id, string name, string address)
+    {
+        var warehouse = manager.CreateWarehouse(id, name, address);
+        Console.Write($"Created warehouse successfully: {warehouse.Id}\n" +
+                      $"Warehouse: {warehouse.Name}\n" +
+                      $"Address: {warehouse.Address}\n");
+    }
     
 }

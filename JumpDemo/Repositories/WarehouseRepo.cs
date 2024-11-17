@@ -4,10 +4,11 @@ using JumpDemo.Domain;
 namespace JumpDemo.Repositories;
 
 [Repository]
+[Singleton]
 public class WarehouseRepo
 {
     
-    private readonly Warehouse[] _warehouses = [
+    private readonly List<Warehouse> _warehouses = [
         new(1, "Warehouse Global Wineries", "Julesplein 175b, 3231, Rijkhovenzele, Brussel, Belgium",
         [
           new Product("Red wine", 35),
@@ -41,5 +42,9 @@ public class WarehouseRepo
     {
         return _warehouses.First(warehouse => warehouse.Id == id).Products;
     }
-    
+
+    public void AddWarehouse(Warehouse warehouse)
+    {
+        _warehouses.Add(warehouse);
+    }
 }

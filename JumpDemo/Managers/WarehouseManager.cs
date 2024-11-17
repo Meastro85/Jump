@@ -16,5 +16,12 @@ public class WarehouseManager(WarehouseRepo repo)
     {
         return repo.ReadWarehouseById(id);
     }
+
+    public Warehouse CreateWarehouse(int id, string name, string address)
+    {
+        var warehouse = new Warehouse(id, name, address, []);
+        repo.AddWarehouse(warehouse);
+        return warehouse;
+    }
     
 }

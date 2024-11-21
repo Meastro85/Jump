@@ -12,6 +12,7 @@ public sealed class ComponentProvider
 {
 
     private readonly Dictionary<Type, object> _components = new();
+    private readonly ComponentStore _componentStore = ComponentStore.Instance;
     private static ComponentProvider? _instance;
     private static readonly object Padlock = new();
     
@@ -39,31 +40,16 @@ public sealed class ComponentProvider
 
     private object CreateInstance(Type type)
     {
-        var constructor = GetConstructor(type);
+        var constructor = _componentStore.GetConstructor(type);
 
-        var parameters = constructor.GetParameters()
+        var parameters = _componentStore.GetParameters(constructor)
             .Select(p => GetComponent(p.ParameterType))
             .ToArray();
 
         return constructor.Invoke(parameters);
     }
 
-    private ConstructorInfo GetConstructor(Type type)
-    {
-        var constructors = type.GetConstructors();
-        var sortedConstructors = constructors.OrderByDescending(c => c.GetParameters().Length)
-            .ToList();
-        
-        if (sortedConstructors.Count > 1 && sortedConstructors[0].GetParameters().Length ==
-            sortedConstructors[1].GetParameters().Length)
-            throw new AmbiguousMatchException($"Type ${type.Name} has multiple valid constructors.");
-
-        var constructor = sortedConstructors.FirstOrDefault();
-        
-        if(constructor == null) throw new InvalidComponentException("No valid constructors found for " + type.Name);
-
-        return constructor;
-    }
+    
     
     private void AddSingleton(object component)
     {

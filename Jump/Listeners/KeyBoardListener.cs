@@ -7,6 +7,7 @@ namespace Jump.Listeners;
 internal static class KeyBoardListener
 {
     private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
+    private static bool _enabled = false;
 
     internal static Task RegisterKeyboardControllers(ICollection<Type> controllers)
     {
@@ -52,7 +53,8 @@ internal static class KeyBoardListener
         Dictionary<ConsoleKey, (object Controller, MethodInfo Method)> routeMappings)
     {
         Console.WriteLine("Starting keyboard listener");
-        while (true)
+        _enabled = true;
+        while (_enabled)
         {
             var key = (await Task.Run(() => Console.ReadKey(true))).Key;
             if (!routeMappings.TryGetValue(key, out var mapping)) continue;

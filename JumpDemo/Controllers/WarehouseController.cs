@@ -1,6 +1,9 @@
-﻿using Jump.Attributes;
+﻿using Jump;
+using Jump.Attributes;
 using Jump.Attributes.Actions;
 using Jump.Attributes.Components.Controllers;
+using Jump.Providers;
+using JumpDemo.Domain;
 using JumpDemo.Managers;
 using JumpDemo.Repositories;
 
@@ -24,31 +27,24 @@ public class WarehouseController
     }
     
     [Route("/warehouse")]
-    public void GetWarehouses()
+    public IJsonResponse GetWarehouses()
     {
         var warehouses = _manager.GetWarehouses();
-        foreach (var warehouse in warehouses)
-        {
-            Console.Write($"Warehouse: {warehouse.Name}\n" +
-                          $"Address: {warehouse.Address}\n");
-        }
+        return new JsonResponse<IEnumerable<Warehouse>>(warehouses);
     }
     
     [Route("/warehouse/{id}")]
-    public void GetWarehouseById(int id)
+    public IJsonResponse GetWarehouseById(int id)
     {
         var warehouse = _manager.GetWarehouseById(id);
-        Console.Write($"Warehouse: {warehouse.Name}\n" +
-                      $"Address: {warehouse.Address}\n");
+        return new JsonResponse<Warehouse>(warehouse);
     }
 
     [Route("/warehouse/{id}/{name}/{address}")]
-    public void CreateWarehouse(int id, string name, string address)
+    public IJsonResponse CreateWarehouse(int id, string name, string address)
     {
         var warehouse = _manager.CreateWarehouse(id, name, address);
-        Console.Write($"Created warehouse successfully: {warehouse.Id}\n" +
-                      $"Warehouse: {warehouse.Name}\n" +
-                      $"Address: {warehouse.Address}\n");
+        return new JsonResponse<Warehouse>(warehouse, 201);
     }
     
 }

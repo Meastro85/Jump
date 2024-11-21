@@ -1,5 +1,8 @@
-﻿using Jump.Attributes.Actions;
+﻿using Jump;
+using Jump.Attributes.Actions;
 using Jump.Attributes.Components.Controllers;
+using Jump.Providers;
+using JumpDemo.Domain;
 using JumpDemo.Managers;
 
 namespace JumpDemo.Controllers;
@@ -8,15 +11,10 @@ namespace JumpDemo.Controllers;
 public class ProductController(ProductManager manager)
 {
     [Route("/warehouse/{id}/products")]
-    public void GetProductsInWarehouse(int id)
+    public IJsonResponse GetProductsInWarehouse(int id)
     {
         var products = manager.ReadProductsInWarehouse(id).ToList();
-        if(products.Count == 0) Console.WriteLine("No products found");
-        foreach (var product in products)
-        {
-            Console.Write($"Product: {product.Name}\n" +
-                          $"Quantity: {product.Quantity}\n");
-        }
+        return new JsonResponse<List<Product>>(products);
     }
     
 }

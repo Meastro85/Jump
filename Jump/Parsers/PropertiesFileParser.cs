@@ -2,7 +2,7 @@
 
 namespace Jump.Parsers;
 
-public class PropertiesFileParser
+public sealed class PropertiesFileParser
 {
     private readonly Dictionary<string, string> _properties = new();
 

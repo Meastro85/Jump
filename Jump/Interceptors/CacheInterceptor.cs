@@ -14,11 +14,12 @@ public abstract class CacheInterceptor : IInterceptor
         var identifier = new StringBuilder();
         foreach (var paramName in paramNames)
         {
-            var paramValue = parameters[paramName];
-            identifier.Append($"{paramName}={paramValue}");
+            if (!parameters.TryGetValue(paramName, out var paramValue))
+                throw new ArgumentException($"Parameter {paramName} not found.");
+            identifier.Append($"-{paramValue}");
         }
 
-        return $"{key}-{identifier}";
+        return $"{key}{identifier}";
     }
 
     protected static Dictionary<string, object> GetParameters(IInvocation invocation)

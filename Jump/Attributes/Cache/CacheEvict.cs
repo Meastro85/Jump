@@ -11,5 +11,5 @@
 public class CacheEvict(string key, string[]? paramNames = null) : Interceptor
 {
     public string Key { get; } = key;
-    public string[] ParamNames { get; } = paramNames;
+    public string[]? ParamNames { get; } = paramNames;
 }

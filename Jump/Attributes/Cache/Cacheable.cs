@@ -11,5 +11,5 @@
 public class Cacheable(string key, params string[]? paramNames) : Interceptor
 {
     public string Key { get; } = key;
-    public string[] ParamNames { get; } = paramNames;
+    public string[]? ParamNames { get; } = paramNames;
 }

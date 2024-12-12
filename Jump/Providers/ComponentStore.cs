@@ -119,8 +119,9 @@ internal sealed class ComponentStore
     
     private static void CheckCacheAttributes(Type component)
     {
-        var attributes = component.GetCustomAttributes(false);
-        if(attributes.Any(attr => attr is Cacheable || attr is CacheEvict))
+        var methodAttributes = component.GetMethods()
+            .SelectMany(m => m.GetCustomAttributes(false));
+        if(methodAttributes.Any(attr => attr is Cacheable or CacheEvict))
             throw new InvalidComponentException($"Cacheable or CacheEvict attributes are not allowed on component: {component.Name} since it's not a service.");
     }
     

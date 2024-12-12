@@ -8,14 +8,13 @@ namespace JumpDemo.Managers;
 [Service]
 public class WarehouseManager(WarehouseRepo repo)
 {
-    
     [Cacheable("Warehouses")]
     public virtual IEnumerable<Warehouse> GetWarehouses()
     {
         return repo.ReadWarehouses();
     }
-    
-    [Cacheable("Warehouses")]
+
+    [Cacheable("Warehouses", "id")]
     public virtual Warehouse GetWarehouseById(int id)
     {
         return repo.ReadWarehouseById(id);
@@ -28,5 +27,4 @@ public class WarehouseManager(WarehouseRepo repo)
         repo.AddWarehouse(warehouse);
         return warehouse;
     }
-    
 }

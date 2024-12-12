@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Jump.Attributes.Actions;
+using Jump.LoggingSetup;
 using Jump.Providers;
 using static System.Text.RegularExpressions.Regex;
 
@@ -16,7 +17,6 @@ internal static class RestListener
 
     internal static Task RegisterRestControllers(ICollection<Type> controllers)
     {
-        Console.WriteLine("Registering REST controllers");
         var routeMappings = RegisterAllRoutes(controllers);
         return StartRestListenerAsync(routeMappings);
     }
@@ -33,9 +33,12 @@ internal static class RestListener
 
             foreach (var (route, method) in routes)
             {
+                Logging.Logger.LogInformation("Registering route: " + route);
                 if (!routeMappings.ContainsKey(route)) routeMappings[route] = (restController, method);
                 else throw new AmbiguousMatchException($"Route {route} is ambiguous");
             }
+            
+            Logging.Logger.LogInformation("Registered REST listener: " + controller);
         }
 
         return routeMappings;
@@ -83,7 +86,7 @@ internal static class RestListener
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Logging.Logger.LogError("Error processing request", ex);
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace Jump.Parsers;
+﻿using Jump.LoggingSetup;
+
+namespace Jump.Parsers;
 
 public class PropertiesFileParser
 {
@@ -19,6 +21,7 @@ public class PropertiesFileParser
     
     private void LoadProperties(string filePath)
     {
+        Logging.Logger.LogInformation($"Loading properties from {filePath}");
         foreach (var line in File.ReadAllLines(filePath))
         {
             var trimmedLine = line.Trim();

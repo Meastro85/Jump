@@ -1,4 +1,5 @@
 ﻿using Jump.Attributes.Components;
+using Jump.LoggingSetup;
 
 namespace Jump.Providers;
 
@@ -34,8 +35,7 @@ public sealed class ComponentProvider
     {
         var isSingleton = componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton));
         
-        if (isSingleton) return _singletons[componentType];
-        return CreateInstance(componentType);
+        return isSingleton ? _singletons[componentType] : CreateInstance(componentType);
     }
 
     private object CreateInstance(Type type)
@@ -46,15 +46,19 @@ public sealed class ComponentProvider
             .Select(p => GetComponent(p.ParameterType))
             .ToArray();
 
+        if(Logging.LoggingLevel == LoggingLevel.DEBUG) Logging.Logger.LogInformation($"Created component: {type} with parameters: {parameters}");
         return constructor.Invoke(parameters);
     }
-
-    
     
     private void AddSingleton(object component)
     {
-        if(_singletons.ContainsKey(component.GetType())) return;
+        if(_singletons.ContainsKey(component.GetType()))
+        {
+            Logging.Logger.LogWarning($"Singleton of {component.GetType()} already exists.");
+            return;
+        }
         _singletons.Add(component.GetType(), component);
+        Logging.Logger.LogInformation($"Singleton of {component.GetType()} added.");
     }
 
     internal void AddSingletons(ICollection<Type> components)

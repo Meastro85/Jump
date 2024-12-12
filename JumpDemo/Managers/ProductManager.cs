@@ -1,5 +1,4 @@
-﻿using Jump.Attributes;
-using Jump.Attributes.Components;
+﻿using Jump.Attributes.Components;
 using JumpDemo.Domain;
 using JumpDemo.Repositories;
 

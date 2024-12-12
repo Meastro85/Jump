@@ -55,6 +55,11 @@ internal sealed class ComponentStore
     {
         return _singletons;
     }
+
+    internal IEnumerable<Type> GetConfigurations()
+    {
+        return _components[typeof(Configuration)];
+    }
     
     internal IDictionary<Type, ICollection<Type>> GetComponents()
     {
@@ -71,7 +76,7 @@ internal sealed class ComponentStore
         return _parameters[constructor];
     }
     
-    private ConstructorInfo GetMainConstructor(Type type)
+    private static ConstructorInfo GetMainConstructor(Type type)
     {
         var constructors = type.GetConstructors();
         var sortedConstructors = constructors.OrderByDescending(c => c.GetParameters().Length)

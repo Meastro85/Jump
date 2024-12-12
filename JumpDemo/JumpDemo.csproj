@@ -11,4 +11,11 @@
       <ProjectReference Include="..\Jump\Jump.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="jump.properties" />
+      <Content Include="jump.properties">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

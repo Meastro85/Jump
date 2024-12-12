@@ -8,7 +8,7 @@ public class SecondKeyPressController
 {
     
     [KeyAction(ConsoleKey.B)]
-    public void onKeyB()
+    public void OnKeyB()
     {
         Console.WriteLine("Key B pressed");
     }

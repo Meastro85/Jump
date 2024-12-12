@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Jump.Attributes.Components;
-using Jump.Exceptions;
+﻿using Jump.Attributes.Components;
 
 namespace Jump.Providers;
 
@@ -11,7 +9,7 @@ namespace Jump.Providers;
 public sealed class ComponentProvider
 {
 
-    private readonly Dictionary<Type, object> _components = new();
+    private readonly Dictionary<Type, object> _singletons = new();
     private readonly ComponentStore _componentStore = ComponentStore.Instance;
     private static ComponentProvider? _instance;
     private static readonly object Padlock = new();
@@ -34,8 +32,10 @@ public sealed class ComponentProvider
     /// <returns>Your requested component.</returns>
     public object GetComponent(Type componentType)
     {
-        return componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton)) 
-            ? _components[componentType] : CreateInstance(componentType);
+        var isSingleton = componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton));
+        
+        if (isSingleton) return _singletons[componentType];
+        return CreateInstance(componentType);
     }
 
     private object CreateInstance(Type type)
@@ -53,8 +53,8 @@ public sealed class ComponentProvider
     
     private void AddSingleton(object component)
     {
-        if(_components.ContainsKey(component.GetType())) return;
-        _components.Add(component.GetType(), component);
+        if(_singletons.ContainsKey(component.GetType())) return;
+        _singletons.Add(component.GetType(), component);
     }
 
     internal void AddSingletons(ICollection<Type> components)

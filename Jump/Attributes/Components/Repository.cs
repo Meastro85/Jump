@@ -4,4 +4,5 @@
 /// Attribute <c>Repository</c> is used to mark a class as a repository.
 /// It is recommended to use the <c>Singleton</c> attribute as well, if you're working with in memory data.
 /// </summary>
+[AttributeUsage(AttributeTargets.Class)]
 public class Repository : Component;

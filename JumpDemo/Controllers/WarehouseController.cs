@@ -9,6 +9,7 @@ using JumpDemo.Repositories;
 
 namespace JumpDemo.Controllers;
 
+// Example of primary constructor usage.
 [RestController]
 public class WarehouseController
 {

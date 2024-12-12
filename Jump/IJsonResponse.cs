@@ -1,4 +1,4 @@
-﻿namespace Jump.Providers;
+﻿namespace Jump;
 
 public interface IJsonResponse
 {

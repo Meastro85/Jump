@@ -13,6 +13,7 @@ public static class JumpApplication
 
     private static readonly ComponentStore ComponentStore = ComponentStore.Instance;
     private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
+    private static readonly ConfigurationProvider ConfigurationProvider = ConfigurationProvider.Instance;
     
     /// <summary>
     /// This method starts the program and registers all components.
@@ -22,6 +23,7 @@ public static class JumpApplication
     {
         OrderComponents(primarySource);
         RegisterSingletons();
+        RegisterConfigurations();
         await RegisterListeners();
     }
     
@@ -30,7 +32,7 @@ public static class JumpApplication
         var components = primarySource.Assembly
             .DefinedTypes
             .Where(t => t.CustomAttributes.Any(attr => Utility.InheritsFromAttribute(attr.AttributeType, typeof(Component))));
-
+        
         foreach (var component in components)
         {
             ComponentStore.AddComponent(component);
@@ -42,6 +44,12 @@ public static class JumpApplication
     {
         var singletons = ComponentStore.GetSingletons();
         ComponentProvider.AddSingletons(singletons);
+    }
+
+    private static void RegisterConfigurations()
+    {
+        var configurations = ComponentStore.GetConfigurations();
+        ConfigurationProvider.AddConfigurations(configurations);
     }
     
     private static async Task RegisterListeners()

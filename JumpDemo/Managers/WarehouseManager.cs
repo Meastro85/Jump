@@ -1,4 +1,5 @@
-﻿using Jump.Attributes.Components;
+﻿using Jump.Attributes.Cache;
+using Jump.Attributes.Components;
 using JumpDemo.Domain;
 using JumpDemo.Repositories;
 
@@ -7,17 +8,21 @@ namespace JumpDemo.Managers;
 [Service]
 public class WarehouseManager(WarehouseRepo repo)
 {
-    public IEnumerable<Warehouse> GetWarehouses()
+    
+    [Cacheable("Warehouses")]
+    public virtual IEnumerable<Warehouse> GetWarehouses()
     {
         return repo.ReadWarehouses();
     }
-
-    public Warehouse GetWarehouseById(int id)
+    
+    [Cacheable("Warehouses")]
+    public virtual Warehouse GetWarehouseById(int id)
     {
         return repo.ReadWarehouseById(id);
     }
 
-    public Warehouse CreateWarehouse(int id, string name, string address)
+    [CacheEvict("Warehouses")]
+    public virtual Warehouse CreateWarehouse(int id, string name, string address)
     {
         var warehouse = new Warehouse(id, name, address, []);
         repo.AddWarehouse(warehouse);

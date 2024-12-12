@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Jump.Attributes;
+using Jump.Attributes.Cache;
 using Jump.Attributes.Components;
 using Jump.Exceptions;
 using Jump.LoggingSetup;
@@ -40,7 +41,9 @@ internal sealed class ComponentStore
         var componentType = componentAttributes
             .First(attr => Utility.InheritsFromAttribute(attr.AttributeType, typeof(Component)))
             .AttributeType;
-
+        
+        ValidateComponent(component, componentType);
+        
         var isSingleton = component.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton));
 
         if (isSingleton) _singletons.Add(component);
@@ -105,4 +108,20 @@ internal sealed class ComponentStore
         Logging.Logger.LogError("No valid constructors found for " + type.Name, exc);
         throw exc;
     }
+
+    private static void ValidateComponent(Type component, Type componentType)
+    {
+        if (componentType != typeof(Service))
+        {
+            CheckCacheAttributes(component);
+        }
+    }
+    
+    private static void CheckCacheAttributes(Type component)
+    {
+        var attributes = component.GetCustomAttributes(false);
+        if(attributes.Any(attr => attr is Cacheable || attr is CacheEvict))
+            throw new InvalidComponentException($"Cacheable or CacheEvict attributes are not allowed on component: {component.Name} since it's not a service.");
+    }
+    
 }

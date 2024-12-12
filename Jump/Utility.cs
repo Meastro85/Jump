@@ -13,4 +13,11 @@ internal static class Utility
         }
         return false;
     }
+    
+    internal static string CreateCacheKey(string key, object[] parameters)
+    {
+        if(parameters.Length == 0) return key;
+        return $"{key}-{parameters[0]}";
+    }
+    
 }

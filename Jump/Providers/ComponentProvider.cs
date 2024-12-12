@@ -15,6 +15,7 @@ public sealed class ComponentProvider
 {
     private readonly Dictionary<Type, object> _singletons = new();
     private readonly ComponentStore _componentStore = ComponentStore.Instance;
+    private readonly ConfigurationProvider _configurationProvider = ConfigurationProvider.Instance;
     private static ComponentProvider? _instance;
     private static readonly object Padlock = new();
 
@@ -37,8 +38,13 @@ public sealed class ComponentProvider
     public object GetComponent(Type componentType)
     {
         var isSingleton = componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton));
+        var isConfiguration = componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Configuration));
 
-        return isSingleton ? _singletons[componentType] : CreateInstance(componentType);
+        if (isSingleton)
+        {
+            return _singletons[componentType];
+        } 
+        return isConfiguration ? _configurationProvider.GetConfiguration(componentType) : CreateInstance(componentType);
     }
 
     private object CreateInstance(Type type)

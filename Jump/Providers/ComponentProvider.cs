@@ -4,20 +4,21 @@ using Jump.Attributes.Cache;
 using Jump.Attributes.Components;
 using Jump.Interceptors;
 using Jump.LoggingSetup;
+using Jump.Providers.Component_store;
 
 namespace Jump.Providers;
 
 /// <summary>
-/// Class <c>ComponentProvider</c> is a provider for components.
-/// You can use this to get a component from the store.
+///     Class <c>ComponentProvider</c> is a provider for components.
+///     You can use this to get a component from the store.
 /// </summary>
 public sealed class ComponentProvider
 {
-    private readonly Dictionary<Type, object> _singletons = new();
-    private readonly ComponentStore _componentStore = ComponentStore.Instance;
-    private readonly ConfigurationProvider _configurationProvider = ConfigurationProvider.Instance;
     private static ComponentProvider? _instance;
     private static readonly object Padlock = new();
+    private readonly ComponentStore _componentStore = ComponentStore.Instance;
+    private readonly ConfigurationProvider _configurationProvider = ConfigurationProvider.Instance;
+    private readonly Dictionary<Type, object> _singletons = new();
 
     public static ComponentProvider Instance
     {
@@ -31,7 +32,7 @@ public sealed class ComponentProvider
     }
 
     /// <summary>
-    /// This method gets creates an instance of a component, or a singleton if it exists.
+    ///     This method gets creates an instance of a component, or a singleton if it exists.
     /// </summary>
     /// <param name="componentType">The type of the component you want to get.</param>
     /// <returns>Your requested component.</returns>
@@ -40,10 +41,7 @@ public sealed class ComponentProvider
         var isSingleton = componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton));
         var isConfiguration = componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Configuration));
 
-        if (isSingleton)
-        {
-            return _singletons[componentType];
-        } 
+        if (isSingleton) return _singletons[componentType];
         return isConfiguration ? _configurationProvider.GetConfiguration(componentType) : CreateInstance(componentType);
     }
 
@@ -53,11 +51,9 @@ public sealed class ComponentProvider
         var parameters = _componentStore.GetParameters(constructor)
             .Select(p => GetComponent(p.ParameterType))
             .ToArray();
-        
+
         if (type.GetMethods().Any(m => m.GetCustomAttributes(true).Any(attr => attr is Interceptor)))
-        {
             return GenerateProxy(type, parameters);
-        }
 
         if (Logging.LoggingLevel == LoggingLevel.DEBUG)
             Logging.Logger.LogInformation($"Created component: {type} with parameters: {parameters}");
@@ -79,11 +75,11 @@ public sealed class ComponentProvider
             .SelectMany(m => m.GetCustomAttributes(true));
         var interceptionList = new List<IInterceptor>();
         var enumerable = attributes.ToList();
-        if(enumerable.Any(attr => attr is Cacheable)) interceptionList.Add(new CacheableInterceptor());
-        if(enumerable.Any(attr => attr is CacheEvict)) interceptionList.Add(new CacheEvictInterceptor());
+        if (enumerable.Any(attr => attr is Cacheable)) interceptionList.Add(new CacheableInterceptor());
+        if (enumerable.Any(attr => attr is CacheEvict)) interceptionList.Add(new CacheEvictInterceptor());
         return interceptionList;
     }
-    
+
     private void AddSingleton(object component)
     {
         if (_singletons.ContainsKey(component.GetType()))

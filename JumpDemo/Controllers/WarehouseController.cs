@@ -1,9 +1,7 @@
-﻿using Jump;
-using Jump.Attributes;
+﻿using Jump.Attributes;
 using Jump.Attributes.Actions;
 using Jump.Attributes.Components.Controllers;
 using Jump.Http_response;
-using Jump.Providers;
 using JumpDemo.Domain;
 using JumpDemo.Managers;
 using JumpDemo.Repositories;
@@ -14,27 +12,26 @@ namespace JumpDemo.Controllers;
 [RestController]
 public class WarehouseController
 {
-    
     private readonly WarehouseManager _manager;
-    
+
     [AutoWired]
     public WarehouseController(WarehouseManager manager)
     {
         _manager = manager;
     }
-    
+
     public WarehouseController(WarehouseManager newManager, WarehouseRepo repo)
     {
         _manager = newManager;
     }
-    
+
     [Route("/warehouse")]
     public IJsonResponse GetWarehouses()
     {
         var warehouses = _manager.GetWarehouses();
         return new JsonResponse<IEnumerable<Warehouse>>(warehouses);
     }
-    
+
     [Route("/warehouse/{id}")]
     public IJsonResponse GetWarehouseById(int id)
     {
@@ -48,5 +45,4 @@ public class WarehouseController
         var warehouse = _manager.CreateWarehouse(id, name, address);
         return new JsonResponse<Warehouse>(warehouse, 201);
     }
-    
 }

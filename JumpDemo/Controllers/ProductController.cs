@@ -1,7 +1,6 @@
-﻿using Jump;
-using Jump.Attributes.Actions;
+﻿using Jump.Attributes.Actions;
 using Jump.Attributes.Components.Controllers;
-using Jump.Providers;
+using Jump.Http_response;
 using JumpDemo.Domain;
 using JumpDemo.Managers;
 
@@ -16,5 +15,4 @@ public class ProductController(ProductManager manager)
         var products = manager.ReadProductsInWarehouse(id).ToList();
         return new JsonResponse<List<Product>>(products);
     }
-    
 }

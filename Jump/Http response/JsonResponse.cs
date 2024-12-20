@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Jump;
+namespace Jump.Http_response;
 
 public class JsonResponse<T> : IJsonResponse
 {

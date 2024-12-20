@@ -1,4 +1,4 @@
-﻿namespace Jump;
+﻿namespace Jump.Http_response;
 
 public interface IJsonResponse
 {

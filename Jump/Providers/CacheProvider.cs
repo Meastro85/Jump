@@ -33,12 +33,6 @@ public sealed class CacheProvider
         else
             Logging.Logger.LogWarning($"Key {key} not found in cache");
     }
-    
-    internal object? GetFromCache(string key)
-    {
-        Logging.Logger.LogInformation($"Getting {key} from cache");
-        return _cache.TryGetValue(key, out var value) ? value : null;
-    }
 
     internal bool TryGetFromCache(string key, out object? value)
     {

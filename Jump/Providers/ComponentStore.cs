@@ -1,9 +1,12 @@
 ﻿using System.Reflection;
+using Castle.MicroKernel;
 using Jump.Attributes;
 using Jump.Attributes.Cache;
 using Jump.Attributes.Components;
 using Jump.Exceptions;
 using Jump.LoggingSetup;
+using QuikGraph;
+using QuikGraph.Algorithms;
 
 namespace Jump.Providers;
 
@@ -14,7 +17,8 @@ internal sealed class ComponentStore
     private readonly Dictionary<Type, ICollection<Type>> _components = new();
     private readonly Dictionary<Type, ConstructorInfo> _constructors = new();
     private readonly Dictionary<ConstructorInfo, ParameterInfo[]> _parameters = new();
-    private readonly List<Type> _singletons = new();
+    private readonly List<Type> _singletons = [];
+    private readonly BidirectionalGraph<Type, Edge<Type>> _dependencyGraph = new();
 
     internal static ComponentStore Instance
     {
@@ -52,7 +56,8 @@ internal sealed class ComponentStore
         var constructor = GetMainConstructor(component);
         _constructors.Add(component, constructor);
         _parameters.Add(constructor, constructor.GetParameters());
-
+        CreateGraph(component, constructor.GetParameters());
+        
         if (_components.TryGetValue(componentType, out var list)) list.Add(component);
         else _components.Add(componentType, [component]);
         Logging.Logger.LogInformation("Added component: " + component);
@@ -123,6 +128,21 @@ internal sealed class ComponentStore
             .SelectMany(m => m.GetCustomAttributes(false));
         if(methodAttributes.Any(attr => attr is Cacheable or CacheEvict))
             throw new InvalidComponentException($"Cacheable or CacheEvict attributes are not allowed on component: {component.Name} since it's not a service.");
+    }
+
+    private void CreateGraph(Type component, ParameterInfo[] dependencies)
+    {
+        _dependencyGraph.AddVertex(component);
+        foreach (var dependency in dependencies.Select(p => p.ParameterType))
+        {
+            _dependencyGraph.AddVertex(dependency);
+            _dependencyGraph.AddEdge(new Edge<Type>(component, dependency));
+        }
+
+        if (!_dependencyGraph.IsDirectedAcyclicGraph())
+        {
+            throw new CyclicDependencyException("Circular dependency detected in component: " + component.Name);
+        }
     }
     
 }

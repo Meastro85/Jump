@@ -1,62 +1,22 @@
 ﻿using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
-using Jump.Attributes.Actions;
 using Jump.Http_response;
 using Jump.LoggingSetup;
-using Jump.Providers;
+using Jump.Util;
 using static System.Text.RegularExpressions.Regex;
 
 namespace Jump.Listeners;
 
 internal static class RestListener
 {
-    private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
     private static bool _enabled;
     private static readonly int Port = 8080;
 
     internal static Task RegisterRestControllers(ICollection<Type> controllers)
     {
-        var routeMappings = RegisterAllRoutes(controllers);
+        var routeMappings = RouteFunctions.RegisterAllRoutes(controllers);
         return StartRestListenerAsync(routeMappings);
-    }
-
-    private static Dictionary<string, (object Controller, MethodInfo Method)> RegisterAllRoutes(
-        ICollection<Type> controllers)
-    {
-        var routeMappings = new Dictionary<string, (object Controller, MethodInfo Method)>();
-
-        foreach (var controller in controllers)
-        {
-            var restController = ComponentProvider.GetComponent(controller);
-            var routes = DiscoverRoutes(restController);
-
-            foreach (var (route, method) in routes)
-            {
-                Logging.Logger.LogInformation("Registering route: " + route);
-                if (!routeMappings.ContainsKey(route)) routeMappings[route] = (restController, method);
-                else throw new AmbiguousMatchException($"Route {route} is ambiguous");
-            }
-            
-            Logging.Logger.LogInformation("Registered REST listener: " + controller);
-        }
-
-        return routeMappings;
-    }
-
-    private static Dictionary<string, MethodInfo> DiscoverRoutes(object controller)
-    {
-        var routeMappings = new Dictionary<string, MethodInfo>();
-        var controllerType = controller.GetType();
-        foreach (var method in controllerType.GetMethods())
-        {
-            var routeActionAttribute = method.GetCustomAttribute<Route>();
-            if (routeActionAttribute == null) continue;
-            routeMappings[routeActionAttribute.Path] = method;
-        }
-
-        return routeMappings;
     }
 
     private static async Task StartRestListenerAsync(Dictionary<string, (object, MethodInfo)> routeMappings)
@@ -66,7 +26,6 @@ internal static class RestListener
         listener.Prefixes.Add($"http://localhost:{Port}/");
         listener.Start();
         while (_enabled)
-        {
             try
             {
                 var context = await listener.GetContextAsync();
@@ -89,7 +48,6 @@ internal static class RestListener
             {
                 Logging.Logger.LogError("Error processing request", ex);
             }
-        }
     }
 
     private static async Task WriteResponseAsync(HttpListenerResponse response, string message)
@@ -108,42 +66,15 @@ internal static class RestListener
 
         foreach (var (route, (controller, method)) in routeMappings)
         {
-            var regexPattern = CreateRoutePattern(route);
+            var regexPattern = RouteFunctions.CreateRoutePattern(route);
             var match = Match(input, regexPattern);
 
             if (!match.Success) continue;
-            var parameters = GetRouteParameters(method, match);
+            var parameters = RouteFunctions.GetRouteParameters(method, match);
             jsonResponse = (IJsonResponse?)method.Invoke(controller, parameters);
             return true;
         }
 
         return false;
-    }
-
-    private static string CreateRoutePattern(string route)
-    {
-        return "^" + Replace(route, @"\{(\w+)\}", "(?<$1>[^/]+)") + "$";
-    }
-
-    private static object?[] GetRouteParameters(MethodInfo method, Match match)
-    {
-        var parameters = method.GetParameters();
-        var args = new object?[parameters.Length];
-
-        for (var i = 0; i < parameters.Length; i++)
-        {
-            var paramName = parameters[i].Name;
-            if (paramName != null && match.Groups[paramName].Success)
-            {
-                var value = match.Groups[paramName].Value;
-                args[i] = Convert.ChangeType(value, parameters[i].ParameterType);
-            }
-            else
-            {
-                args[i] = null;
-            }
-        }
-
-        return args;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Jump;
+﻿namespace Jump.Util;
 
 internal static class Utility
 {
@@ -11,7 +11,7 @@ internal static class Utility
 
             if (attributeType.BaseType != null) attributeType = attributeType.BaseType;
         }
+
         return false;
     }
-    
 }

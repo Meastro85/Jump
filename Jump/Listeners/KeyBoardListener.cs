@@ -2,14 +2,13 @@
 using Jump.Attributes.Actions;
 using Jump.LoggingSetup;
 using Jump.Providers;
-using Serilog.Core;
 
 namespace Jump.Listeners;
 
 internal static class KeyBoardListener
 {
     private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
-    private static bool _enabled = false;
+    private static bool _enabled;
 
     internal static Task RegisterKeyboardControllers(ICollection<Type> controllers)
     {
@@ -32,7 +31,7 @@ internal static class KeyBoardListener
                 if (routeMappings.ContainsKey(key)) throw new AmbiguousMatchException($"Key {key} is ambiguous");
                 routeMappings[key] = (keyboardController, method);
             }
-            
+
             Logging.Logger.LogInformation("Registered keyboard listener: " + controller);
         }
 
@@ -65,5 +64,4 @@ internal static class KeyBoardListener
             method.Invoke(controller, []);
         }
     }
-    
 }

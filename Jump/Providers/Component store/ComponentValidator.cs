@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Jump.Attributes;
 using Jump.Attributes.Cache;
 using Jump.Attributes.Components;
 using Jump.Exceptions;
@@ -15,6 +16,7 @@ internal static class ComponentValidator
     internal static void ValidateComponent(Type component, Type componentType)
     {
         if (componentType != typeof(Service)) CheckCacheAttributes(component);
+        if (componentType != typeof(Configuration)) CheckCloudAttributes(component);
     }
 
     private static void CheckCacheAttributes(Type component)
@@ -24,6 +26,14 @@ internal static class ComponentValidator
         if (methodAttributes.Any(attr => attr is Cacheable or CacheEvict))
             throw new InvalidComponentException(
                 $"Cacheable or CacheEvict attributes are not allowed on component: {component.Name} since it's not a service.");
+    }
+
+    private static void CheckCloudAttributes(Type component)
+    {
+        var methodAttributes = component.GetMethods().SelectMany(m => m.GetCustomAttributes(false));
+        if (methodAttributes.Any(attr => attr is Hop))
+            throw new InvalidComponentException(
+                $"Cloud attributes are not allowed on component: {component.Name} since it's not a configuration.");
     }
 
     internal static void CreateGraph(Type component, ParameterInfo[] dependencies)

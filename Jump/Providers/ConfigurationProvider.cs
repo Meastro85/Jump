@@ -10,6 +10,7 @@ public sealed class ConfigurationProvider
     private static ConfigurationProvider? _instance;
     private static readonly object Padlock = new();
     private readonly Dictionary<Type, object> _configurations = new();
+    private readonly HopProvider _hopProvider = HopProvider.Instance;
 
     public static ConfigurationProvider Instance
     {
@@ -45,7 +46,7 @@ public sealed class ConfigurationProvider
         return _configurations[configuration];
     }
 
-    private static object CreateConfiguration(Type type, PropertiesFileParser propertiesParser)
+    private object CreateConfiguration(Type type, PropertiesFileParser propertiesParser)
     {
         var configuration = Activator.CreateInstance(type);
         var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -59,6 +60,18 @@ public sealed class ConfigurationProvider
             property.SetValue(configuration, value);
         }
 
+        _hopProvider.AddHops(type);
+
         return configuration!;
+    }
+
+    public object GetHop(Type hop)
+    {
+        return _hopProvider.GetHop(hop);
+    }
+
+    internal bool IsHop(Type type)
+    {
+        return _hopProvider.IsHop(type);
     }
 }

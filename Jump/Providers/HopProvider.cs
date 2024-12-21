@@ -7,7 +7,7 @@ public class HopProvider
 {
     private static HopProvider? _instance;
     private static readonly object Padlock = new();
-    private readonly ComponentProvider _componentProvider = ComponentProvider.Instance;
+    private readonly Lazy<ComponentProvider> _componentProvider = new( () => ComponentProvider.Instance);
     private readonly Dictionary<Type, object> _hops = new();
 
     public static HopProvider Instance
@@ -29,7 +29,7 @@ public class HopProvider
     private void CreateHop(MethodInfo hopDefinition)
     {
         var parameters = hopDefinition.GetParameters()
-            .Select(p => _componentProvider.GetComponent(p.ParameterType))
+            .Select(p => _componentProvider.Value.GetComponent(p.ParameterType))
             .ToArray();
         var returnType = hopDefinition.ReturnParameter.ParameterType;
 

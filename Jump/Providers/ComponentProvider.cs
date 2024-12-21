@@ -40,7 +40,9 @@ public sealed class ComponentProvider
     {
         var isSingleton = componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Singleton));
         var isConfiguration = componentType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Configuration));
+        var isHop = _configurationProvider.IsHop(componentType);
 
+        if (isHop) return _configurationProvider.GetHop(componentType);
         if (isSingleton) return _singletons[componentType];
         return isConfiguration ? _configurationProvider.GetConfiguration(componentType) : CreateInstance(componentType);
     }

@@ -23,10 +23,15 @@ public static class JumpApplication
     /// <param name="primarySource">The starting class to begin assembly scanning.</param>
     public static async Task Run(Type primarySource)
     {
+        ScanComponents(primarySource);
+        await RegisterListeners();
+    }
+
+    public static void ScanComponents(Type primarySource)
+    {
         OrderComponents(primarySource);
         RegisterSingletons();
         RegisterConfigurations();
-        await RegisterListeners();
     }
 
     private static void OrderComponents(Type primarySource)
@@ -50,8 +55,8 @@ public static class JumpApplication
     private static void RegisterConfigurations()
     {
         Logging.Logger.LogInformation("Registering configurations.");
-        var configurations = ComponentStore.GetConfigurations();
-        ConfigurationProvider.AddConfigurations(configurations);
+        var configurations = ComponentStore.GetConfigurations().ToList();
+        if (configurations.Count > 0) ConfigurationProvider.AddConfigurations(configurations);
     }
 
     private static async Task RegisterListeners()

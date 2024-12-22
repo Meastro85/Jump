@@ -34,6 +34,16 @@ public sealed class ComponentProvider
     /// <summary>
     ///     This method gets creates an instance of a component, or a singleton if it exists.
     /// </summary>
+    /// <typeparam name="T">The type of the component you want to get.</typeparam>
+    /// <returns>Your requested component.</returns>
+    public T GetComponent<T>()
+    {
+        return (T)GetComponent(typeof(T));
+    }
+
+    /// <summary>
+    ///     This method gets creates an instance of a component, or a singleton if it exists.
+    /// </summary>
     /// <param name="componentType">The type of the component you want to get.</param>
     /// <returns>Your requested component.</returns>
     public object GetComponent(Type componentType)

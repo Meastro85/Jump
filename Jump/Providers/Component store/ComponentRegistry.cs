@@ -25,7 +25,8 @@ internal class ComponentRegistry
 
     internal IEnumerable<Type> GetConfigurations()
     {
-        return _components[typeof(Configuration)];
+        var hasConfig = _components.TryGetValue(typeof(Configuration), out var configurations);
+        return hasConfig ? configurations! : [];
     }
 
     internal IDictionary<Type, ICollection<Type>> GetComponents()

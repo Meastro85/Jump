@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Jump.Attributes;
+using Jump.Exceptions;
 
 namespace Jump.Providers;
 
@@ -23,7 +24,10 @@ public class HopProvider
 
     private void AddHop(Type hop, object instance)
     {
-        _hops.Add(hop, instance);
+        if (!_hops.TryAdd(hop, instance))
+        {
+            throw new DuplicateHopException("The hop: " + hop.Name + " is already registered. Check your configuration.");
+        }
     }
 
     private void CreateHop(MethodInfo hopDefinition)

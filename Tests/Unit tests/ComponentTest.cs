@@ -1,17 +1,18 @@
-﻿using Jump;
-using Jump.Providers;
-using Tests.Component_test_domain;
-using Tests.Test_Domain;
-using Tests.Test_Domain.Controllers;
-using Tests.Test_Domain.Managers;
+﻿using Jump.Providers;
+using Tests.Component_test_domain.Controllers;
+using Tests.Component_test_domain.Hop_test;
+using Tests.Component_test_domain.Managers;
+using Tests.Fixtures;
 
 namespace Tests.Unit_tests;
 
-public class ComponentTest
+public class ComponentTest : IClassFixture<ComponentFixture>
 {
-    public ComponentTest()
+    private readonly ComponentFixture _fixture;
+
+    public ComponentTest(ComponentFixture fixture)
     {
-        JumpApplication.ScanComponents(typeof(BaseClass));
+        _fixture = fixture;
     }
 
     [Fact]
@@ -34,5 +35,15 @@ public class ComponentTest
 
         Assert.NotNull(testController);
         Assert.Equal("Test", testController.Test());
+    }
+
+    [Fact]
+    public void HopGetsCreatedSuccessfullyWithDependencies()
+    {
+        var provider = ComponentProvider.Instance;
+        var controller = provider.GetComponent<HopController>();
+
+        Assert.NotNull(controller);
+        Assert.Equal("Test This is a hop test", controller.Test());
     }
 }

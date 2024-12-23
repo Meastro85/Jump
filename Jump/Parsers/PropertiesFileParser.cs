@@ -10,35 +10,27 @@ public sealed class PropertiesFileParser
     {
         var directory = Directory.GetCurrentDirectory();
         var filePathToUse = filePath ?? directory + "/jump.properties";
-        if (!File.Exists(filePathToUse))
-        {
-            throw new FileNotFoundException("File not found", filePath);
-        }
-        
+        if (!File.Exists(filePathToUse)) return;
+
         LoadProperties(filePathToUse);
-        
     }
-    
+
+    public IEnumerable<string> Keys => _properties.Keys;
+
     private void LoadProperties(string filePath)
     {
         Logging.Logger.LogInformation($"Loading properties from {filePath}");
         foreach (var line in File.ReadAllLines(filePath))
         {
             var trimmedLine = line.Trim();
-            if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith('#'))
-            {
-                continue;
-            }
+            if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith('#')) continue;
 
             var separatorIndex = trimmedLine.IndexOf('=');
             if (separatorIndex <= 0) continue;
             var key = trimmedLine[..separatorIndex].Trim();
             var value = trimmedLine[(separatorIndex + 1)..].Trim();
 
-            if (!string.IsNullOrEmpty(key))
-            {
-                _properties[key] = value;
-            }
+            if (!string.IsNullOrEmpty(key)) _properties[key] = value;
         }
     }
 
@@ -58,7 +50,4 @@ public sealed class PropertiesFileParser
         var value = Get(key);
         return bool.TryParse(value, out var result) && result;
     }
-
-    public IEnumerable<string> Keys => _properties.Keys;
-    
 }

@@ -23,6 +23,12 @@ public sealed class ConfigurationProvider
         }
     }
 
+    public static ConfigurationProvider Dispose()
+    {
+        _instance = null;
+        return Instance;
+    }
+
     private void AddConfiguration(object configuration)
     {
         if (_configurations.ContainsKey(configuration.GetType()))

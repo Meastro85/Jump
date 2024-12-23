@@ -23,6 +23,12 @@ internal sealed class ComponentStore
         }
     }
 
+    internal static ComponentStore Dispose()
+    {
+        _instance = null;
+        return Instance;
+    }
+
     internal void AddComponent(Type component)
     {
         var componentType = ValidateAndGetComponentType(component);

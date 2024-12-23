@@ -13,9 +13,9 @@ namespace Jump;
 /// </summary>
 public static class JumpApplication
 {
-    private static readonly ComponentStore ComponentStore = ComponentStore.Instance;
-    private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
-    private static readonly ConfigurationProvider ConfigurationProvider = ConfigurationProvider.Instance;
+    private static ComponentStore _componentStore = ComponentStore.Instance;
+    private static ComponentProvider _componentProvider = ComponentProvider.Instance;
+    private static ConfigurationProvider _configurationProvider = ConfigurationProvider.Instance;
 
     /// <summary>
     ///     This method starts the program and registers all components.
@@ -34,35 +34,46 @@ public static class JumpApplication
         RegisterConfigurations();
     }
 
+    public static void Dispose()
+    {
+        _componentStore = ComponentStore.Dispose();
+        _componentProvider = ComponentProvider.Dispose();
+        _configurationProvider = ConfigurationProvider.Dispose();
+    }
+
     private static void OrderComponents(Type primarySource)
     {
         Logging.Logger.LogInformation("Starting component scanning.");
+        var targetNameSpace = primarySource.Namespace;
         var components = primarySource.Assembly
             .DefinedTypes
-            .Where(t => t.CustomAttributes.Any(attr =>
-                Utility.InheritsFromAttribute(attr.AttributeType, typeof(Component))));
+            .Where(t => (targetNameSpace == null || (t.Namespace != null && t.Namespace.StartsWith(targetNameSpace)))
+                        && t.CustomAttributes.Any(
+                            attr =>
+                                Utility.InheritsFromAttribute(attr.AttributeType,
+                                    typeof(Component))));
 
-        foreach (var component in components) ComponentStore.AddComponent(component);
+        foreach (var component in components) _componentStore.AddComponent(component);
     }
 
     private static void RegisterSingletons()
     {
         Logging.Logger.LogInformation("Registering singletons.");
-        var singletons = ComponentStore.GetSingletons();
-        ComponentProvider.AddSingletons(singletons);
+        var singletons = _componentStore.GetSingletons();
+        _componentProvider.AddSingletons(singletons);
     }
 
     private static void RegisterConfigurations()
     {
         Logging.Logger.LogInformation("Registering configurations.");
-        var configurations = ComponentStore.GetConfigurations().ToList();
-        if (configurations.Count > 0) ConfigurationProvider.AddConfigurations(configurations);
+        var configurations = _componentStore.GetConfigurations().ToList();
+        if (configurations.Count > 0) _configurationProvider.AddConfigurations(configurations);
     }
 
     private static async Task RegisterListeners()
     {
         Logging.Logger.LogInformation("Registering listeners.");
-        var components = ComponentStore.GetComponents();
+        var components = _componentStore.GetComponents();
         List<Task> tasks = [];
 
         foreach (var kvp in components.AsParallel())

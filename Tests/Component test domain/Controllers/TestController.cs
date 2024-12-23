@@ -1,7 +1,7 @@
 ﻿using Jump.Attributes.Components.Controllers;
-using Tests.Test_Domain.Managers;
+using Tests.Component_test_domain.Managers;
 
-namespace Tests.Test_Domain.Controllers;
+namespace Tests.Component_test_domain.Controllers;
 
 [RestController]
 public class TestController(TestManager manager)

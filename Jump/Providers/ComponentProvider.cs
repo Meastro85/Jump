@@ -31,6 +31,12 @@ public sealed class ComponentProvider
         }
     }
 
+    public static ComponentProvider Dispose()
+    {
+        _instance = null;
+        return Instance;
+    }
+
     /// <summary>
     ///     This method gets creates an instance of a component, or a singleton if it exists.
     /// </summary>

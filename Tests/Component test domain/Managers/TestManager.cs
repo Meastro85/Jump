@@ -1,6 +1,6 @@
 ﻿using Jump.Attributes.Components;
 
-namespace Tests.Test_Domain.Managers;
+namespace Tests.Component_test_domain.Managers;
 
 [Service]
 public class TestManager

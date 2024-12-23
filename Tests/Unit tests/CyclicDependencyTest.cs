@@ -5,16 +5,22 @@ using FirstTestManager = Tests.Cyclic_dependency_test_domain.Direct_dependency.F
 
 namespace Tests.Unit_tests;
 
-[Collection("CyclicDependencyTest")]
 public class CyclicDependencyTest
 {
-    [Fact]
+
+    [TearDown]
+    public void TearDown()
+    {
+        JumpApplication.Dispose();
+    }
+    
+    [Test]
     public void DirectCyclicDependenciesAreDetected()
     {
         Assert.Throws<CyclicDependencyException>(() => JumpApplication.ScanComponents(typeof(FirstTestManager)));
     }
 
-    [Fact]
+    [Test]
     public void IndirectCyclicDependenciesAreDetected()
     {
         Assert.Throws<CyclicDependencyException>(() => JumpApplication.ScanComponents(typeof(ThirdTestManager)));

@@ -25,6 +25,7 @@ public sealed class ConfigurationProvider
 
     public static ConfigurationProvider Dispose()
     {
+        HopProvider.Dispose();
         _instance = null;
         return Instance;
     }

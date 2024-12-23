@@ -8,10 +8,10 @@ using QuikGraph.Algorithms;
 
 namespace Jump.Providers.Component_store;
 
-internal static class ComponentValidator
+internal class ComponentValidator
 {
-    private static readonly BidirectionalGraph<Type, Edge<Type>> DependencyGraph = new();
-    private static readonly object GraphLock = new();
+    private readonly BidirectionalGraph<Type, Edge<Type>> _dependencyGraph = new();
+    private readonly object _graphLock = new();
 
     internal static void ValidateComponent(Type component, Type componentType)
     {
@@ -36,18 +36,18 @@ internal static class ComponentValidator
                 $"Cloud attributes are not allowed on component: {component.Name} since it's not a configuration.");
     }
 
-    internal static void CreateGraph(Type component, ParameterInfo[] dependencies)
+    internal void CreateGraph(Type component, ParameterInfo[] dependencies)
     {
-        lock (GraphLock)
+        lock (_graphLock)
         {
-            DependencyGraph.AddVertex(component);
+            _dependencyGraph.AddVertex(component);
             foreach (var dependency in dependencies.Select(p => p.ParameterType))
             {
-                DependencyGraph.AddVertex(dependency);
-                DependencyGraph.AddEdge(new Edge<Type>(component, dependency));
+                _dependencyGraph.AddVertex(dependency);
+                _dependencyGraph.AddEdge(new Edge<Type>(component, dependency));
             }
 
-            if (!DependencyGraph.IsDirectedAcyclicGraph())
+            if (!_dependencyGraph.IsDirectedAcyclicGraph())
                 throw new CyclicDependencyException("Circular dependency detected in component: " + component.Name);
         }
     }

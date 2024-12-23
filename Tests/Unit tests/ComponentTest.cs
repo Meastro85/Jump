@@ -1,49 +1,57 @@
-﻿using Jump.Providers;
+﻿using Jump;
+using Jump.Providers;
+using Tests.Component_test_domain;
 using Tests.Component_test_domain.Controllers;
 using Tests.Component_test_domain.Hop_test;
 using Tests.Component_test_domain.Managers;
-using Tests.Fixtures;
 
 namespace Tests.Unit_tests;
 
-public class ComponentTest : IClassFixture<ComponentFixture>
+[TestFixture]
+public class ComponentTest
 {
-    private readonly ComponentFixture _fixture;
 
-    public ComponentTest(ComponentFixture fixture)
+    [SetUp]
+    public void SetUp()
     {
-        _fixture = fixture;
+        JumpApplication.ScanComponents(typeof(BaseClass));
     }
 
-    [Fact]
+    [TearDown]
+    public void TearDown()
+    {
+        JumpApplication.Dispose();
+    }
+    
+    [Test]
     public void ComponentCanBeCreated()
     {
         var provider = ComponentProvider.Instance;
 
         var testManager = provider.GetComponent<TestManager>();
 
-        Assert.NotNull(testManager);
-        Assert.Equal("Test", testManager.Test());
+        Assert.That(testManager, Is.Not.Null);
+        Assert.That(testManager.Test(), Is.EqualTo("Test"));
     }
 
-    [Fact]
+    [Test]
     public void ComponentsCanBeCreatedWithDependencies()
     {
         var provider = ComponentProvider.Instance;
 
         var testController = provider.GetComponent<TestController>();
 
-        Assert.NotNull(testController);
-        Assert.Equal("Test", testController.Test());
+        Assert.That(testController, Is.Not.Null);
+        Assert.That(testController.Test(), Is.EqualTo("Test"));
     }
 
-    [Fact]
+    [Test]
     public void HopGetsCreatedSuccessfullyWithDependencies()
     {
         var provider = ComponentProvider.Instance;
         var controller = provider.GetComponent<HopController>();
 
-        Assert.NotNull(controller);
-        Assert.Equal("Test This is a hop test", controller.Test());
+        Assert.That(controller, Is.Not.Null);
+        Assert.That(controller.Test(), Is.EqualTo("Test This is a hop test"));
     }
 }

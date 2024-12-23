@@ -19,6 +19,12 @@ public sealed class CacheProvider
         }
     }
 
+    public static CacheProvider Dispose()
+    {
+        _instance = null;
+        return Instance;
+    }
+    
     internal void AddToCache(string key, object value)
     {
         Logging.Logger.LogInformation($"Adding {key} to cache with value: {value}");

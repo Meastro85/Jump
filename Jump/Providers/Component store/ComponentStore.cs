@@ -11,6 +11,7 @@ internal sealed class ComponentStore
     private static readonly object Padlock = new();
     private readonly ComponentRegistry _componentRegistry = new();
     private readonly SingletonStore _singletonStore = new();
+    private readonly ComponentValidator _componentValidator = new();
 
     internal static ComponentStore Instance
     {
@@ -38,7 +39,7 @@ internal sealed class ComponentStore
         var constructor = ConstructorSearch.GetMainConstructor(component);
         _componentRegistry.RegisterConstructor(component, constructor);
 
-        ComponentValidator.CreateGraph(component, constructor.GetParameters());
+        _componentValidator.CreateGraph(component, constructor.GetParameters());
 
         _componentRegistry.RegisterComponent(component, componentType);
     }

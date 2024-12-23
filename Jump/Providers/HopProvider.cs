@@ -22,6 +22,12 @@ public class HopProvider
         }
     }
 
+    public static HopProvider Dispose()
+    {
+        _instance = null;
+        return Instance;
+    }
+    
     private void AddHop(Type hop, object instance)
     {
         if (!_hops.TryAdd(hop, instance))

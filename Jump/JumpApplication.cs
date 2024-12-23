@@ -39,6 +39,7 @@ public static class JumpApplication
         _componentStore = ComponentStore.Dispose();
         _componentProvider = ComponentProvider.Dispose();
         _configurationProvider = ConfigurationProvider.Dispose();
+        CacheProvider.Dispose();
     }
 
     private static void OrderComponents(Type primarySource)

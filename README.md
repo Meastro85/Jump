@@ -1,11 +1,11 @@
 ﻿# .NET DI Container - JUMP
 
-JUMP is an attribute based dependency injection container for .NET.
+JUMP is an attribute based dependency injection container for .NET based on Spring from Java.
 
 ## Using JUMP
 ### Getting started
 
-To start using this framework, simply add:
+To start using this framework, simply add this to your program.cs:
 
 ```csharp
 using Jump;
@@ -49,5 +49,30 @@ public class MyRepository
 {
 }
 ```
+
+## Running and compiling
+
+### Compiling
+
+You can compile the framework by using:
+````
+dotnet build
+````
+
+### Demo application
+You can run the demo application by using:
+````
+dotnet run --project JumpDemo
+````
+
+### Tests
+
+You can run the tests by using:
+````
+dotnet test
+````
+in the terminal.
+
+
 
 Created by Vincent Verboven

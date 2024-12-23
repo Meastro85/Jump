@@ -7,7 +7,7 @@ public sealed class InterceptionFixture : IDisposable
 {
     public InterceptionFixture()
     {
-        JumpApplication.ScanComponents(typeof(BaseClass));
+        JumpApplication.ScanComponents(typeof(Interception));
     }
 
     public void Dispose()

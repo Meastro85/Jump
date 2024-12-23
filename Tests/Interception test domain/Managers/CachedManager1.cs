@@ -20,6 +20,12 @@ public class CachedManager1
         TestObject[] items = [new("Cached object 1","This is the first object in the list."), new("Cached object 2", "This is the second object in the list.")];
         return items[id - 1];
     }
+
+    [CacheEvict("test", "id")]
+    public virtual void RemoveCacheItemWithId(int id)
+    {
+        
+    }
     
     [CacheEvict("test")]
     public virtual void RemoveCacheItem()

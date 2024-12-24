@@ -73,6 +73,22 @@ dotnet test
 ````
 in the terminal.
 
+## Plans for development
 
+This was a school project for programming 3 at KdG.
+Since I found this a fun and interesting project I plan on expanding on it in the future.
+
+The current plans are:
+
+### High priority
+- [ ] Add support for repositories
+- [ ] Add support for databases
+
+### Medium priority
+- [ ] Expand on the documentation
+- [ ] Expand the Http Calls to allow classic CRUD operations
+
+### Low priority
+- [ ] More interception mechanics
 
 Created by Vincent Verboven

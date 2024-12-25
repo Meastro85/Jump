@@ -2,6 +2,7 @@
 
 /// <summary>
 ///     The cacheable attribute is used to mark methods that should be cached.
+///     Generally this will be used on methods that require alot of resources to run or take long to run.
 ///     This will cache the return value of your method for later user.
 ///     You can invalidate this cache by using the <see cref="CacheEvict" /> attribute on another method.
 /// </summary>

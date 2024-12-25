@@ -8,7 +8,10 @@ using JumpDemo.Repositories;
 
 namespace JumpDemo.Controllers;
 
-// Example of primary constructor usage.
+/// <summary>
+/// This class is a simple example of a <see cref="RestController"/>.
+/// It also includes an example of primary constructor injection through <see cref="AutoWired"/>.
+/// </summary>
 [RestController]
 public class WarehouseController
 {

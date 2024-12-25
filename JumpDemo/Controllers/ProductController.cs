@@ -6,6 +6,9 @@ using JumpDemo.Managers;
 
 namespace JumpDemo.Controllers;
 
+/// <summary>
+/// This class is a simple example of a <see cref="RestController"/>
+/// </summary>
 [RestController]
 public class ProductController(ProductManager manager)
 {

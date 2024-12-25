@@ -5,6 +5,11 @@ using JumpDemo.Repositories;
 
 namespace JumpDemo.Managers;
 
+/// <summary>
+/// This class is an example of a <see cref="Service"/>.
+/// It also includes the <see cref="Cacheable"/> and <see cref="CacheEvict"/> attributes.
+/// </summary>
+/// <param name="repo"></param>
 [Service]
 public class WarehouseManager(WarehouseRepo repo)
 {

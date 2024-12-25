@@ -34,7 +34,6 @@ public abstract class CacheInterceptor : IInterceptor
             var parameterName = parameter.Name;
             var parameterValue = parameters[i];
 
-            // Add the parameter name and value to the dictionary
             parametersDictionary.Add(parameterName!, parameterValue);
         }
 

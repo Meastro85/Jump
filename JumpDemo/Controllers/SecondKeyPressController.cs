@@ -4,6 +4,9 @@ using JumpDemo.Domain;
 
 namespace JumpDemo.Controllers;
 
+/// <summary>
+/// This class is an example of the <see cref="KeyboardController"/> combined with its corresponding <see cref="KeyAction"/> attributes.
+/// </summary>
 [KeyboardController]
 public class SecondKeyPressController
 {

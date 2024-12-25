@@ -23,6 +23,7 @@ public static class JumpApplication
     /// <param name="primarySource">The starting class to begin assembly scanning.</param>
     public static async Task Run(Type primarySource)
     {
+        Logging.Logger.LogInformation(StartupSplash.Splash);
         ScanComponents(primarySource);
         await RegisterListeners();
     }
@@ -91,6 +92,7 @@ public static class JumpApplication
             }
 
         Logging.Logger.LogInformation("Started listeners.");
+        Logging.Logger.LogInformation("Application has started.");
         await Task.WhenAll(tasks);
     }
 }

@@ -65,6 +65,9 @@ You can run the demo application by using:
 dotnet run --project JumpDemo
 ````
 
+If you're project has started successfully, your console should look like this:
+![demoConsole.png](demoConsole.png)
+
 ### Tests
 
 You can run the tests by using:

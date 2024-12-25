@@ -4,6 +4,9 @@ using JumpDemo.Domain;
 
 namespace JumpDemo.Configurations;
 
+/// <summary>
+/// This class has a small example on how to use the <see cref="Hop"/> attribute
+/// </summary>
 [Configuration]
 public class HopTestConfiguration
 {

@@ -1,4 +1,5 @@
 ﻿using Jump.Attributes.Actions;
+using Jump.Attributes.Actions.Http;
 using Jump.Attributes.Components.Controllers;
 using Jump.Http_response;
 using JumpDemo.Domain;
@@ -12,7 +13,7 @@ namespace JumpDemo.Controllers;
 [RestController]
 public class ProductController(ProductManager manager)
 {
-    [Route("/warehouse/{id}/products")]
+    [Route("/warehouse/{id}/products", Method.GET)]
     public IJsonResponse GetProductsInWarehouse(int id)
     {
         var products = manager.ReadProductsInWarehouse(id).ToList();

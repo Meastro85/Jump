@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Reflection;
 using System.Text;
 using Jump.Http_response;
 using Jump.LoggingSetup;
@@ -20,7 +19,7 @@ internal static class RestListener
     }
 
     private static async Task StartRestListenerAsync(
-        Dictionary<string, (object, MethodInfo, ICollection<string>)> routeMappings)
+        IDictionary<string, RouteMapping> routeMappings)
     {
         _enabled = true;
         using var listener = new HttpListener();
@@ -70,9 +69,9 @@ internal static class RestListener
             _ => "application/json"
         };
     }
-    
+
     private static bool TryProcessRoute(string input, string action,
-        Dictionary<string, (object Controller, MethodInfo Method, ICollection<string> actions)> routeMappings,
+        IDictionary<string, RouteMapping> routeMappings,
         out IResponse? response)
     {
         response = null;
@@ -80,15 +79,14 @@ internal static class RestListener
         try
         {
             var mapping = routeMappings.First(mapping => Match(input, mapping.Key).Success);
-            var actions = mapping.Value.actions;
-            if (!actions.Contains(action))
+            if (!mapping.Value.ActionExists(action))
             {
                 response = new Response((int)HttpStatusCode.MethodNotAllowed, "Method not allowed");
                 return true;
             }
-            
-            var method = mapping.Value.Method;
-            var controller = mapping.Value.Controller;
+
+            var method = mapping.Value.GetMethod(action);
+            var controller = mapping.Value.GetController(action);
 
             var parameters = RouteFunctions.GetRouteParameters(method, Match(input, mapping.Key));
             response = (IResponse?)method.Invoke(controller, parameters);

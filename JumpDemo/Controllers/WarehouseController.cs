@@ -1,5 +1,4 @@
 ﻿using Jump.Attributes;
-using Jump.Attributes.Actions;
 using Jump.Attributes.Actions.Http;
 using Jump.Attributes.Components.Controllers;
 using Jump.Http_response;
@@ -29,21 +28,21 @@ public class WarehouseController
         _manager = newManager;
     }
 
-    [Route("/warehouse", HttpAction.Get)]
+    [HttpGet("/warehouse")]
     public IResponse GetWarehouses()
     {
         var warehouses = _manager.GetWarehouses();
         return new JsonResponse<IEnumerable<Warehouse>>(warehouses);
     }
 
-    [Route("/warehouse/{id}", HttpAction.Get)]
+    [HttpGet("/warehouse/{id}")]
     public IResponse GetWarehouseById(int id)
     {
         var warehouse = _manager.GetWarehouseById(id);
         return new JsonResponse<Warehouse>(warehouse);
     }
 
-    [Route("/warehouse/{id}/{name}/{address}", HttpAction.Get)]
+    [HttpPost("/warehouse/{id}/{name}/{address}")]
     public IResponse CreateWarehouse(int id, string name, string address)
     {
         var warehouse = _manager.CreateWarehouse(id, name, address);

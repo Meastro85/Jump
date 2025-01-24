@@ -19,4 +19,5 @@ public class ProductController(ProductManager manager)
         var products = manager.ReadProductsInWarehouse(id).ToList();
         return new JsonResponse<List<Product>>(products);
     }
+    
 }

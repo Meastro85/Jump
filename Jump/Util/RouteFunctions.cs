@@ -11,12 +11,9 @@ public static class RouteFunctions
 {
     private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
 
-    internal static Dictionary<string, (object Controller, MethodInfo Method, ICollection<string> availableActions)>
-        RegisterAllRoutes(
-            ICollection<Type> controllers)
+    internal static IDictionary<string, RouteMapping> RegisterAllRoutes(ICollection<Type> controllers)
     {
-        var routeMappings =
-            new Dictionary<string, (object Controller, MethodInfo Method, ICollection<string> availableActions)>();
+        var routeMappings = new Dictionary<string, RouteMapping>();
 
         foreach (var controller in controllers)
         {
@@ -29,14 +26,31 @@ public static class RouteFunctions
 
                 var action = method.GetCustomAttributes<Route>().First().HttpAction;
                 var patternedRoute = CreateRoutePattern(route);
+
                 if (!routeMappings.ContainsKey(patternedRoute))
-                    routeMappings[patternedRoute] = (restController,
-                        method,
-                        [action]);
-                else if (routeMappings.ContainsKey(patternedRoute) &&
-                         !routeMappings[patternedRoute].availableActions.Contains(action))
-                    routeMappings[patternedRoute].availableActions.Add(action);
-                else throw new AmbiguousMatchException($"Route {route} is ambiguous");
+                {
+                    var routeMapping = new RouteMapping();
+                    routeMapping.ControllerMapping.Add(restController,
+                        [new RouteMapping.MethodMapping(method, action)]);
+                    routeMappings[patternedRoute] = routeMapping;
+                }
+                else if (routeMappings.TryGetValue(patternedRoute, out var mapping) &&
+                         !mapping.ActionExists(action))
+                {
+                    var methodMapping = new RouteMapping.MethodMapping(method, action);
+                    if (mapping.ControllerMapping.TryGetValue(restController, out var controllerMappings))
+                    {
+                        controllerMappings.Add(methodMapping);
+                    }
+                    else
+                    {
+                        mapping.ControllerMapping[restController] = new List<RouteMapping.MethodMapping> { methodMapping };
+                    }
+                }
+                else
+                {
+                    throw new AmbiguousMatchException($"Route {route} is ambiguous");
+                }
             }
 
             Logging.Logger.LogInformation("Registered REST listener: " + controller);

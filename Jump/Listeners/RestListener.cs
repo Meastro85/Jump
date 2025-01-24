@@ -35,16 +35,16 @@ internal static class RestListener
                 var method = request.HttpMethod;
 
                 var path = request.Url?.AbsolutePath.TrimEnd('/');
-                if (path == null || !TryProcessRoute(path, method, routeMappings, out var jsonResponse))
+                if (path == null || !TryProcessRoute(path, method, routeMappings, out var r))
                 {
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                     await WriteResponseAsync(response, "Route not found");
                     continue;
                 }
 
-                response.StatusCode = jsonResponse!.StatusCode;
-                response.ContentType = "application/json";
-                await WriteResponseAsync(response, jsonResponse.GetResponse());
+                response.StatusCode = r!.StatusCode;
+                response.ContentType = DetermineContentType(r.GetType());
+                await WriteResponseAsync(response, r.GetResponse());
             }
             catch (Exception ex)
             {
@@ -61,6 +61,16 @@ internal static class RestListener
         await output.WriteAsync(buffer, 0, buffer.Length);
     }
 
+    private static string DetermineContentType(Type responseType)
+    {
+        return responseType switch
+        {
+            not null when responseType == typeof(string) || responseType == typeof(Response) => "text/plain",
+            not null when responseType == typeof(JsonResponse<>) => "application/json",
+            _ => "application/json"
+        };
+    }
+    
     private static bool TryProcessRoute(string input, string action,
         Dictionary<string, (object Controller, MethodInfo Method, ICollection<string> actions)> routeMappings,
         out IResponse? response)

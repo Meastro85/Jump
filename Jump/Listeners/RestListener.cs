@@ -19,7 +19,8 @@ internal static class RestListener
         return StartRestListenerAsync(routeMappings);
     }
 
-    private static async Task StartRestListenerAsync(Dictionary<string, (object, MethodInfo)> routeMappings)
+    private static async Task StartRestListenerAsync(
+        Dictionary<string, (object, MethodInfo, ICollection<string>)> routeMappings)
     {
         _enabled = true;
         using var listener = new HttpListener();
@@ -31,9 +32,10 @@ internal static class RestListener
                 var context = await listener.GetContextAsync();
                 var request = context.Request;
                 var response = context.Response;
+                var method = request.HttpMethod;
 
                 var path = request.Url?.AbsolutePath.TrimEnd('/');
-                if (path == null || !TryProcessRoute(path, routeMappings, out var jsonResponse))
+                if (path == null || !TryProcessRoute(path, method, routeMappings, out var jsonResponse))
                 {
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                     await WriteResponseAsync(response, "Route not found");
@@ -42,7 +44,7 @@ internal static class RestListener
 
                 response.StatusCode = jsonResponse!.StatusCode;
                 response.ContentType = "application/json";
-                await WriteResponseAsync(response, jsonResponse.ToJson());
+                await WriteResponseAsync(response, jsonResponse.GetResponse());
             }
             catch (Exception ex)
             {
@@ -59,22 +61,33 @@ internal static class RestListener
         await output.WriteAsync(buffer, 0, buffer.Length);
     }
 
-    private static bool TryProcessRoute(string input,
-        Dictionary<string, (object Controller, MethodInfo Method)> routeMappings, out IJsonResponse? jsonResponse)
+    private static bool TryProcessRoute(string input, string action,
+        Dictionary<string, (object Controller, MethodInfo Method, ICollection<string> actions)> routeMappings,
+        out IResponse? response)
     {
-        jsonResponse = null;
+        response = null;
 
-        foreach (var (route, (controller, method)) in routeMappings)
+        try
         {
-            var regexPattern = RouteFunctions.CreateRoutePattern(route);
-            var match = Match(input, regexPattern);
+            var mapping = routeMappings.First(mapping => Match(input, mapping.Key).Success);
+            var actions = mapping.Value.actions;
+            if (!actions.Contains(action))
+            {
+                response = new Response((int)HttpStatusCode.MethodNotAllowed, "Method not allowed");
+                return true;
+            }
+            
+            var method = mapping.Value.Method;
+            var controller = mapping.Value.Controller;
 
-            if (!match.Success) continue;
-            var parameters = RouteFunctions.GetRouteParameters(method, match);
-            jsonResponse = (IJsonResponse?)method.Invoke(controller, parameters);
+            var parameters = RouteFunctions.GetRouteParameters(method, Match(input, mapping.Key));
+            response = (IResponse?)method.Invoke(controller, parameters);
             return true;
         }
-
-        return false;
+        catch (InvalidOperationException ex)
+        {
+            Logging.Logger.LogError("Route not found", ex);
+            return false;
+        }
     }
 }

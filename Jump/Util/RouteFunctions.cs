@@ -11,10 +11,12 @@ public static class RouteFunctions
 {
     private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
 
-    internal static Dictionary<string, (object Controller, MethodInfo Method)> RegisterAllRoutes(
-        ICollection<Type> controllers)
+    internal static Dictionary<string, (object Controller, MethodInfo Method, ICollection<string> availableActions)>
+        RegisterAllRoutes(
+            ICollection<Type> controllers)
     {
-        var routeMappings = new Dictionary<string, (object Controller, MethodInfo Method)>();
+        var routeMappings =
+            new Dictionary<string, (object Controller, MethodInfo Method, ICollection<string> availableActions)>();
 
         foreach (var controller in controllers)
         {
@@ -24,7 +26,16 @@ public static class RouteFunctions
             foreach (var (route, method) in routes)
             {
                 Logging.Logger.LogInformation("Registering route: " + route);
-                if (!routeMappings.ContainsKey(route)) routeMappings[route] = (restController, method);
+
+                var action = method.GetCustomAttributes<Route>().First().HttpAction;
+                var patternedRoute = CreateRoutePattern(route);
+                if (!routeMappings.ContainsKey(patternedRoute))
+                    routeMappings[patternedRoute] = (restController,
+                        method,
+                        [action]);
+                else if (routeMappings.ContainsKey(patternedRoute) &&
+                         !routeMappings[patternedRoute].availableActions.Contains(action))
+                    routeMappings[patternedRoute].availableActions.Add(action);
                 else throw new AmbiguousMatchException($"Route {route} is ambiguous");
             }
 

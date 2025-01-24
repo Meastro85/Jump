@@ -1,7 +1,7 @@
 ﻿namespace Jump.Http_response;
 
-public interface IJsonResponse
+public interface IResponse
 {
     int StatusCode { get; set; }
-    string ToJson();
+    string GetResponse();
 }

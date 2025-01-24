@@ -10,8 +10,8 @@ using JumpDemo.Repositories;
 namespace JumpDemo.Controllers;
 
 /// <summary>
-/// This class is a simple example of a <see cref="RestController"/>.
-/// It also includes an example of primary constructor injection through <see cref="AutoWired"/>.
+///     This class is a simple example of a <see cref="RestController" />.
+///     It also includes an example of primary constructor injection through <see cref="AutoWired" />.
 /// </summary>
 [RestController]
 public class WarehouseController
@@ -29,22 +29,22 @@ public class WarehouseController
         _manager = newManager;
     }
 
-    [Route("/warehouse", Method.GET)]
-    public IJsonResponse GetWarehouses()
+    [Route("/warehouse", HttpAction.Get)]
+    public IResponse GetWarehouses()
     {
         var warehouses = _manager.GetWarehouses();
         return new JsonResponse<IEnumerable<Warehouse>>(warehouses);
     }
 
-    [Route("/warehouse/{id}", Method.GET)]
-    public IJsonResponse GetWarehouseById(int id)
+    [Route("/warehouse/{id}", HttpAction.Get)]
+    public IResponse GetWarehouseById(int id)
     {
         var warehouse = _manager.GetWarehouseById(id);
         return new JsonResponse<Warehouse>(warehouse);
     }
 
-    [Route("/warehouse/{id}/{name}/{address}", Method.GET)]
-    public IJsonResponse CreateWarehouse(int id, string name, string address)
+    [Route("/warehouse/{id}/{name}/{address}", HttpAction.Get)]
+    public IResponse CreateWarehouse(int id, string name, string address)
     {
         var warehouse = _manager.CreateWarehouse(id, name, address);
         return new JsonResponse<Warehouse>(warehouse, 201);

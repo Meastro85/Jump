@@ -2,20 +2,19 @@
 
 namespace Jump.Http_response;
 
-public class JsonResponse<T> : IJsonResponse
+public class JsonResponse<T> : IResponse
 {
-    public T Data { get; set; }
-    public int StatusCode { get; set; }
-
     public JsonResponse(T data, int statusCode = 200)
     {
         Data = data;
         StatusCode = statusCode;
     }
 
-    public string ToJson()
+    private T Data { get; set; }
+    public int StatusCode { get; set; }
+
+    public string GetResponse()
     {
         return JsonSerializer.Serialize(Data);
     }
-    
 }

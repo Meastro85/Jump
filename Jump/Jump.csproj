@@ -4,6 +4,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>0.0.1</Version>
+        <Authors>Vincent Verboven</Authors>
+        <Description>JUMP is an attribute based dependency injection container for .NET based on Spring from Java.</Description>
     </PropertyGroup>
 
     <ItemGroup>

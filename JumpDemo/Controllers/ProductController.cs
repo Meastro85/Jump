@@ -8,13 +8,13 @@ using JumpDemo.Managers;
 namespace JumpDemo.Controllers;
 
 /// <summary>
-/// This class is a simple example of a <see cref="RestController"/>
+///     This class is a simple example of a <see cref="RestController" />
 /// </summary>
 [RestController]
 public class ProductController(ProductManager manager)
 {
-    [Route("/warehouse/{id}/products", Method.GET)]
-    public IJsonResponse GetProductsInWarehouse(int id)
+    [Route("/warehouse/{id}/products", HttpAction.Get)]
+    public IResponse GetProductsInWarehouse(int id)
     {
         var products = manager.ReadProductsInWarehouse(id).ToList();
         return new JsonResponse<List<Product>>(products);

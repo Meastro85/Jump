@@ -90,7 +90,7 @@ internal static class RestListener
             var method = mapping.Value.GetMethod(action);
             var controller = mapping.Value.GetController(action);
             
-            var parameters = RouteFunctions.ParseParameters(method, Match(input!, mapping.Key), request.InputStream);
+            var parameters = RouteFunctions.ParseParameters(method, Match(input!, mapping.Key), request.InputStream).GetAwaiter().GetResult();
             response = (IResponse?)method.Invoke(controller, parameters);
             return true;
         }

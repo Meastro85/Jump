@@ -12,6 +12,7 @@ namespace Jump.Util;
 public static class RouteFunctions
 {
     private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
+    private static JsonSerializerOptions JsonSerializerOptions => new() { PropertyNameCaseInsensitive = true };
 
     internal static IDictionary<string, RouteMapping> RegisterAllRoutes(ICollection<Type> controllers)
     {
@@ -80,7 +81,7 @@ public static class RouteFunctions
         return "^" + Replace(route, @"\{(\w+)\}", "(?<$1>[^/]+)") + "$";
     }
 
-    internal static object?[] ParseParameters(MethodInfo method, Match match, Stream body)
+    internal async static Task<object?[]> ParseParameters(MethodInfo method, Match match, Stream body)
     {
         var parameters = method.GetParameters();
         var args = new object?[parameters.Length];
@@ -101,7 +102,7 @@ public static class RouteFunctions
             else if(parameter.Name != null && attributes.Any(attr => attr is BodyParam))
             {
                 var type = parameter.ParameterType;
-                args[i] = ParseBody(body, type);
+                args[i] = await ParseBody(body, type);
             }
             else
             {
@@ -118,7 +119,7 @@ public static class RouteFunctions
       using var reader = new StreamReader(body);
       var json = await reader.ReadToEndAsync();
 
-      return JsonSerializer.Deserialize(json, paramType);
+      return JsonSerializer.Deserialize(json, paramType, JsonSerializerOptions);
     }
     
 }

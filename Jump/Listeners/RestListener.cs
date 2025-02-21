@@ -31,10 +31,9 @@ internal static class RestListener
                 var context = await listener.GetContextAsync();
                 var request = context.Request;
                 var response = context.Response;
-                var method = request.HttpMethod;
 
                 var path = request.Url?.AbsolutePath.TrimEnd('/');
-                if (path == null || !TryProcessRoute(path, method, routeMappings, out var r))
+                if (path == null || !TryProcessRoute(request, routeMappings, out var r))
                 {
                     response.StatusCode = (int)HttpStatusCode.NotFound;
                     await WriteResponseAsync(response, "Route not found");
@@ -70,7 +69,7 @@ internal static class RestListener
         };
     }
 
-    private static bool TryProcessRoute(string input, string action,
+    private static bool TryProcessRoute(HttpListenerRequest request,
         IDictionary<string, RouteMapping> routeMappings,
         out IResponse? response)
     {
@@ -78,7 +77,10 @@ internal static class RestListener
 
         try
         {
-            var mapping = routeMappings.First(mapping => Match(input, mapping.Key).Success);
+            var action = request.HttpMethod;
+            var input = request.Url?.AbsolutePath.TrimEnd('/');
+            
+            var mapping = routeMappings.First(mapping => Match(input!, mapping.Key).Success);
             if (!mapping.Value.ActionExists(action))
             {
                 response = new Response((int)HttpStatusCode.MethodNotAllowed, "Method not allowed");
@@ -87,8 +89,8 @@ internal static class RestListener
 
             var method = mapping.Value.GetMethod(action);
             var controller = mapping.Value.GetController(action);
-
-            var parameters = RouteFunctions.GetRouteParameters(method, Match(input, mapping.Key));
+            
+            var parameters = RouteFunctions.ParseParameters(method, Match(input!, mapping.Key), request.InputStream);
             response = (IResponse?)method.Invoke(controller, parameters);
             return true;
         }
@@ -98,4 +100,5 @@ internal static class RestListener
             return false;
         }
     }
+    
 }

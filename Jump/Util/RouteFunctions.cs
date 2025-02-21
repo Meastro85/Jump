@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Jump.Attributes.Actions;
+using Jump.Attributes.Parameters;
 using Jump.LoggingSetup;
 using Jump.Providers;
 using static System.Text.RegularExpressions.Regex;
@@ -73,30 +75,50 @@ public static class RouteFunctions
         return routeMappings;
     }
 
-    internal static string CreateRoutePattern(string route)
+    private static string CreateRoutePattern(string route)
     {
         return "^" + Replace(route, @"\{(\w+)\}", "(?<$1>[^/]+)") + "$";
     }
 
-    internal static object?[] GetRouteParameters(MethodInfo method, Match match)
+    internal static object?[] ParseParameters(MethodInfo method, Match match, Stream body)
     {
         var parameters = method.GetParameters();
         var args = new object?[parameters.Length];
 
         for (var i = 0; i < parameters.Length; i++)
         {
-            var paramName = parameters[i].Name;
-            if (paramName != null && match.Groups[paramName].Success)
+            var parameter = parameters[i];
+            var attributes = parameter.GetCustomAttributes(false)
+                .Where(attr => attr is HttpParam)
+                .ToList();
+            
+            
+            if (parameter.Name != null && match.Groups[parameter.Name].Success && !attributes.Any(attr => attr is BodyParam)) 
             {
-                var value = match.Groups[paramName].Value;
-                args[i] = Convert.ChangeType(value, parameters[i].ParameterType);
+                var value = match.Groups[parameter.Name].Value;
+                args[i] = Convert.ChangeType(value, parameter.ParameterType);
+            }
+            else if(parameter.Name != null && attributes.Any(attr => attr is BodyParam))
+            {
+                var type = parameter.ParameterType;
+                args[i] = ParseBody(body, type);
             }
             else
             {
                 args[i] = null;
             }
+            
         }
-
+        
         return args;
     }
+
+    private static async Task<object?> ParseBody(Stream body, Type paramType)
+    {
+      using var reader = new StreamReader(body);
+      var json = await reader.ReadToEndAsync();
+
+      return JsonSerializer.Deserialize(json, paramType);
+    }
+    
 }

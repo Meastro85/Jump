@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Jump.Attributes.Actions;
 using Jump.Attributes.Parameters;
 using Jump.LoggingSetup;
+using Jump.Parsers;
 using Jump.Providers;
 using static System.Text.RegularExpressions.Regex;
 
@@ -12,7 +13,6 @@ namespace Jump.Util;
 public static class RouteFunctions
 {
     private static readonly ComponentProvider ComponentProvider = ComponentProvider.Instance;
-    private static JsonSerializerOptions JsonSerializerOptions => new() { PropertyNameCaseInsensitive = true };
 
     internal static IDictionary<string, RouteMapping> RegisterAllRoutes(ICollection<Type> controllers)
     {
@@ -81,7 +81,7 @@ public static class RouteFunctions
         return "^" + Replace(route, @"\{(\w+)\}", "(?<$1>[^/]+)") + "$";
     }
 
-    internal async static Task<object?[]> ParseParameters(MethodInfo method, Match match, Stream body)
+    internal static async Task<object?[]> ParseParameters(MethodInfo method, Match match, Stream body, string? contentType)
     {
         var parameters = method.GetParameters();
         var args = new object?[parameters.Length];
@@ -101,8 +101,12 @@ public static class RouteFunctions
             }
             else if(parameter.Name != null && attributes.Any(attr => attr is BodyParam))
             {
-                var type = parameter.ParameterType;
-                args[i] = await ParseBody(body, type);
+                args[i] = contentType switch
+                {
+                    "application/json" => await JsonParser.ParseBody(body, parameter.ParameterType),
+                    "application/x-www-form-urlencoded" => await FormParser.ParseBody(body, parameter.ParameterType),
+                    _ => throw new NotImplementedException("Unsupported content type")
+                };
             }
             else
             {
@@ -112,14 +116,6 @@ public static class RouteFunctions
         }
         
         return args;
-    }
-
-    private static async Task<object?> ParseBody(Stream body, Type paramType)
-    {
-      using var reader = new StreamReader(body);
-      var json = await reader.ReadToEndAsync();
-
-      return JsonSerializer.Deserialize(json, paramType, JsonSerializerOptions);
     }
     
 }

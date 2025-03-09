@@ -1,7 +1,7 @@
 ﻿using Jump.Attributes.Components.Controllers;
-using Tests.Component_test_domain.Managers;
+using Tests.Domains.Component_test_domain.Managers;
 
-namespace Tests.Component_test_domain.Hop_test;
+namespace Tests.Domains.Component_test_domain.Hop_test;
 
 [RestController]
 public class HopController(TestManager manager, string hopMessage)

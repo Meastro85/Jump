@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using Jump.Attributes.Actions;
 using Jump.Attributes.Parameters;
@@ -42,13 +41,10 @@ public static class RouteFunctions
                 {
                     var methodMapping = new RouteMapping.MethodMapping(method, action);
                     if (mapping.ControllerMapping.TryGetValue(restController, out var controllerMappings))
-                    {
                         controllerMappings.Add(methodMapping);
-                    }
                     else
-                    {
-                        mapping.ControllerMapping[restController] = new List<RouteMapping.MethodMapping> { methodMapping };
-                    }
+                        mapping.ControllerMapping[restController] = new List<RouteMapping.MethodMapping>
+                            { methodMapping };
                 }
                 else
                 {
@@ -81,7 +77,8 @@ public static class RouteFunctions
         return "^" + Replace(route, @"\{(\w+)\}", "(?<$1>[^/]+)") + "$";
     }
 
-    internal static async Task<object?[]> ParseParameters(MethodInfo method, Match match, Stream body, string? contentType)
+    internal static async Task<object?[]> ParseParameters(MethodInfo method, Match match, Stream body,
+        string? contentType)
     {
         var parameters = method.GetParameters();
         var args = new object?[parameters.Length];
@@ -92,14 +89,15 @@ public static class RouteFunctions
             var attributes = parameter.GetCustomAttributes(false)
                 .Where(attr => attr is HttpParam)
                 .ToList();
-            
-            
-            if (parameter.Name != null && match.Groups[parameter.Name].Success && !attributes.Any(attr => attr is BodyParam)) 
+
+
+            if (parameter.Name != null && match.Groups[parameter.Name].Success &&
+                !attributes.Any(attr => attr is BodyParam))
             {
                 var value = match.Groups[parameter.Name].Value;
                 args[i] = Convert.ChangeType(value, parameter.ParameterType);
             }
-            else if(parameter.Name != null && attributes.Any(attr => attr is BodyParam))
+            else if (parameter.Name != null && attributes.Any(attr => attr is BodyParam))
             {
                 args[i] = contentType switch
                 {
@@ -116,10 +114,14 @@ public static class RouteFunctions
             {
                 args[i] = null;
             }
-            
         }
-        
+
         return args;
     }
-    
+
+    public static async Task<object?[]> ParseParametersForTesting(MethodInfo method, Match match, Stream body,
+        string? contentType)
+    {
+        return await ParseParameters(method, match, body, contentType);
+    }
 }

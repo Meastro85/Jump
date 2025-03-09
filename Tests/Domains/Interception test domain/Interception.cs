@@ -1,6 +1,3 @@
-﻿namespace Tests.Interception_test_domain;
+﻿namespace Tests.Domains.Interception_test_domain;
 
-public class Interception
-{
-    
-}
+public interface Interception;

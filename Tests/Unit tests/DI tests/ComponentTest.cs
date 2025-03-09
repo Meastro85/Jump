@@ -1,20 +1,19 @@
 ﻿using Jump;
 using Jump.Providers;
-using Tests.Component_test_domain;
-using Tests.Component_test_domain.Controllers;
-using Tests.Component_test_domain.Hop_test;
-using Tests.Component_test_domain.Managers;
+using Tests.Domains.Component_test_domain;
+using Tests.Domains.Component_test_domain.Controllers;
+using Tests.Domains.Component_test_domain.Hop_test;
+using Tests.Domains.Component_test_domain.Managers;
 
-namespace Tests.Unit_tests;
+namespace Tests.Unit_tests.DI_tests;
 
 [TestFixture]
 public class ComponentTest
 {
-
     [SetUp]
     public void SetUp()
     {
-        JumpApplication.ScanComponents(typeof(BaseClass));
+        JumpApplication.ScanComponents(typeof(IBaseClass));
     }
 
     [TearDown]
@@ -22,7 +21,7 @@ public class ComponentTest
     {
         JumpApplication.Dispose();
     }
-    
+
     [Test]
     public void ComponentCanBeCreated()
     {

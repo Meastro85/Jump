@@ -1,3 +1,3 @@
-﻿namespace Tests.Component_test_domain;
+﻿namespace Tests.Domains.Component_test_domain;
 
-public class BaseClass;
+public interface IBaseClass;

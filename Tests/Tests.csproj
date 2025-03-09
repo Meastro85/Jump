@@ -22,11 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Jump\Jump.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Domains\" />
+        <ProjectReference Include="..\Jump\Jump.csproj"/>
     </ItemGroup>
 
 </Project>

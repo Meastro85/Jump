@@ -1,13 +1,15 @@
 ﻿using Jump.Attributes;
 using Jump.Attributes.Components;
-using Tests.Component_test_domain.Hop_test;
-using Tests.Component_test_domain.Managers;
+using Tests.Domains.Component_test_domain.Hop_test;
+using Tests.Domains.Component_test_domain.Managers;
 
-namespace Tests.Component_test_domain.Configurations;
+namespace Tests.Domains.Component_test_domain.Configurations;
 
 [Configuration]
 public class HopConfiguration
 {
+    protected HopConfiguration(){}
+    
     [Hop]
     public static HopController HopController(TestManager manager)
     {

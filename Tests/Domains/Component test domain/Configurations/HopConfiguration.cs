@@ -8,7 +8,6 @@ namespace Tests.Domains.Component_test_domain.Configurations;
 [Configuration]
 public class HopConfiguration
 {
-    protected HopConfiguration(){}
     
     [Hop]
     public static HopController HopController(TestManager manager)

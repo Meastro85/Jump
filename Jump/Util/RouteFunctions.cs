@@ -105,7 +105,11 @@ public static class RouteFunctions
                 {
                     "application/json" => await JsonParser.ParseBody(body, parameter.ParameterType),
                     "application/x-www-form-urlencoded" => await FormParser.ParseBody(body, parameter.ParameterType),
-                    _ => throw new NotImplementedException("Unsupported content type")
+                    "multipart/form-data" => await MultipartFormDataParser.ParseBody(body, parameter.ParameterType),
+                    "application/xml" or "text/xml" => await XmlParser.ParseBody(body, parameter.ParameterType),
+                    "text/plain" => await TextPlainParser.ParseBody(body, parameter.ParameterType),
+                    "text/csv" => await CsvParser.ParseBody(body, parameter.ParameterType),
+                    _ => throw new NotImplementedException($"Unsupported content type: ${contentType}")
                 };
             }
             else

@@ -34,12 +34,12 @@ public sealed class ConfigurationProvider
     {
         if (_configurations.ContainsKey(configuration.GetType()))
         {
-            Logging.Logger.LogWarning($"Configuration {configuration.GetType()} already exists.");
+            Logging.LogWarning($"Configuration {configuration.GetType()} already exists.");
             return;
         }
 
         _configurations.Add(configuration.GetType(), configuration);
-        Logging.Logger.LogInformation($"Configuration {configuration.GetType()} added.");
+        Logging.LogInformation($"Configuration {configuration.GetType()} added.");
     }
 
     internal void AddConfigurations(IEnumerable<Type> configurations)

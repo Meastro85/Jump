@@ -46,7 +46,7 @@ internal static class RestListener
             }
             catch (Exception ex)
             {
-                Logging.Logger.LogError("Error processing request", ex);
+                Logging.LogError("Error processing request", ex);
             }
     }
 
@@ -96,7 +96,7 @@ internal static class RestListener
         }
         catch (InvalidOperationException ex)
         {
-            Logging.Logger.LogError("Route not found", ex);
+            Logging.LogError("Route not found", ex);
             return false;
         }
     }

@@ -1,26 +1,19 @@
 ﻿namespace Jump.LoggingSetup;
 
-public sealed class SerilogLogger : ILogger
+public sealed class SerilogLogger(Serilog.ILogger logger) : ILogger
 {
-    private readonly Serilog.ILogger _logger;
-
-    public SerilogLogger(Serilog.ILogger logger)
-    {
-        _logger = logger;
-    }
-
     public void LogInformation(string message)
     {
-        _logger.Information(message);
+        logger.Information(message);
     }
 
     public void LogWarning(string message)
     {
-        _logger.Warning(message);
+        logger.Warning(message);
     }
 
     public void LogError(string message, Exception? ex = null)
     {
-        _logger.Error(ex, message);
+        logger.Error(ex, message);
     }
 }

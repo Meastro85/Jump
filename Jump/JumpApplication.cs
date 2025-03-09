@@ -23,7 +23,7 @@ public static class JumpApplication
     /// <param name="primarySource">The starting class to begin assembly scanning.</param>
     public static async Task Run(Type primarySource)
     {
-        Logging.Logger.LogInformation(StartupSplash.Splash);
+        Logging.LogInformation(StartupSplash.Splash);
         ScanComponents(primarySource);
         await RegisterListeners();
     }
@@ -45,7 +45,7 @@ public static class JumpApplication
 
     private static void OrderComponents(Type primarySource)
     {
-        Logging.Logger.LogInformation("Starting component scanning.");
+        Logging.LogInformation("Starting component scanning.");
         var targetNameSpace = primarySource.Namespace;
         var components = primarySource.Assembly
             .DefinedTypes
@@ -60,21 +60,21 @@ public static class JumpApplication
 
     private static void RegisterSingletons()
     {
-        Logging.Logger.LogInformation("Registering singletons.");
+        Logging.LogInformation("Registering singletons.");
         var singletons = _componentStore.GetSingletons();
         _componentProvider.AddSingletons(singletons);
     }
 
     private static void RegisterConfigurations()
     {
-        Logging.Logger.LogInformation("Registering configurations.");
+        Logging.LogInformation("Registering configurations.");
         var configurations = _componentStore.GetConfigurations().ToList();
         if (configurations.Count > 0) _configurationProvider.AddConfigurations(configurations);
     }
 
     private static async Task RegisterListeners()
     {
-        Logging.Logger.LogInformation("Registering listeners.");
+        Logging.LogInformation("Registering listeners.");
         var components = _componentStore.GetComponents();
         List<Task> tasks = [];
 
@@ -91,8 +91,8 @@ public static class JumpApplication
                     break;
             }
 
-        Logging.Logger.LogInformation("Started listeners.");
-        Logging.Logger.LogInformation("Application has started.");
+        Logging.LogInformation("Started listeners.");
+        Logging.LogInformation("Application has started.");
         await Task.WhenAll(tasks);
     }
 }

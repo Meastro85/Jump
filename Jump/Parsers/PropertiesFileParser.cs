@@ -19,7 +19,7 @@ public sealed class PropertiesFileParser
 
     private void LoadProperties(string filePath)
     {
-        Logging.Logger.LogInformation($"Loading properties from {filePath}");
+        Logging.LogInformation($"Loading properties from {filePath}");
         foreach (var line in File.ReadAllLines(filePath))
         {
             var trimmedLine = line.Trim();

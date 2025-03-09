@@ -25,7 +25,7 @@ public static class RouteFunctions
 
             foreach (var (route, method) in routes)
             {
-                Logging.Logger.LogInformation("Registering route: " + route);
+                Logging.LogInformation("Registering route: " + route);
 
                 var action = method.GetCustomAttributes<Route>().First().HttpAction;
                 var patternedRoute = CreateRoutePattern(route);
@@ -56,7 +56,7 @@ public static class RouteFunctions
                 }
             }
 
-            Logging.Logger.LogInformation("Registered REST listener: " + controller);
+            Logging.LogInformation("Registered REST listener: " + controller);
         }
 
         return routeMappings;

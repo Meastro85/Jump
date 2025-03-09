@@ -26,7 +26,7 @@ internal static class ConstructorSearch
         if (constructor != null) return constructor;
 
         var exc = new InvalidComponentException("No valid constructors found for " + type.Name);
-        Logging.Logger.LogError("No valid constructors found for " + type.Name, exc);
+        Logging.LogError("No valid constructors found for " + type.Name, exc);
         throw exc;
     }
 

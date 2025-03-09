@@ -2,6 +2,6 @@
 
 public enum LoggingLevel
 {
-    DEFAULT,
-    DEBUG
+    Default = 0,
+    Debug = 1
 }

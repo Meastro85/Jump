@@ -27,12 +27,12 @@ internal static class KeyBoardListener
             var keyMappings = DiscoverKeyMappings(keyboardController);
             foreach (var (key, method) in keyMappings)
             {
-                Logging.Logger.LogInformation("Registering key: " + key);
+                Logging.LogInformation("Registering key: " + key);
                 if (routeMappings.ContainsKey(key)) throw new AmbiguousMatchException($"Key {key} is ambiguous");
                 routeMappings[key] = (keyboardController, method);
             }
 
-            Logging.Logger.LogInformation("Registered keyboard listener: " + controller);
+            Logging.LogInformation("Registered keyboard listener: " + controller);
         }
 
         return routeMappings;

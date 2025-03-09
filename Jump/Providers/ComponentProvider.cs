@@ -73,8 +73,7 @@ public sealed class ComponentProvider
         if (type.GetMethods().Any(m => m.GetCustomAttributes(true).Any(attr => attr is Interceptor)))
             return GenerateProxy(type, parameters);
 
-        if (Logging.LoggingLevel == LoggingLevel.DEBUG)
-            Logging.Logger.LogInformation($"Created component: {type} with parameters: {parameters}");
+        Logging.LogDebug($"Created component: {type} with parameters: {parameters}");
         return constructor.Invoke(parameters);
     }
 
@@ -82,8 +81,7 @@ public sealed class ComponentProvider
     {
         var proxyGenerator = new ProxyGenerator();
         var interceptionList = GetInterceptors(type);
-        if (Logging.LoggingLevel == LoggingLevel.DEBUG)
-            Logging.Logger.LogInformation($"Created component proxy: {type} with parameters: {parameters}");
+        Logging.LogDebug($"Created component proxy: {type} with parameters: {parameters}");
         return proxyGenerator.CreateClassProxy(type, parameters, interceptionList.ToArray());
     }
 
@@ -102,12 +100,12 @@ public sealed class ComponentProvider
     {
         if (_singletons.ContainsKey(component.GetType()))
         {
-            Logging.Logger.LogWarning($"Singleton of {component.GetType()} already exists.");
+            Logging.LogWarning($"Singleton of {component.GetType()} already exists.");
             return;
         }
 
         _singletons.Add(component.GetType(), component);
-        Logging.Logger.LogInformation($"Singleton of {component.GetType()} added.");
+        Logging.LogInformation($"Singleton of {component.GetType()} added.");
     }
 
     internal void AddSingletons(ICollection<Type> components)

@@ -14,7 +14,7 @@ internal class ComponentRegistry
     {
         if (_components.TryGetValue(componentType, out var list)) list.Add(component);
         else _components.Add(componentType, [component]);
-        Logging.Logger.LogInformation("Added component: " + component);
+        Logging.LogInformation("Added component: " + component);
     }
 
     internal void RegisterConstructor(Type component, ConstructorInfo constructor)

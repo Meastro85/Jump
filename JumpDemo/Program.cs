@@ -1,5 +1,5 @@
 ﻿using Jump;
 using Jump.LoggingSetup;
 
-Logging.LoggingLevel = LoggingLevel.DEBUG;
+Logging.LoggingLevel = LoggingLevel.Debug;
 await JumpApplication.Run(typeof(Program));

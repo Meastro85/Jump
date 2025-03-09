@@ -6,8 +6,6 @@ namespace Tests.Domains.Component_test_domain.Managers;
 public class TestManager
 {
     
-    protected TestManager(){}
-    
     public string Test()
     {
         return "Test";

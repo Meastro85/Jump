@@ -71,6 +71,29 @@ public partial class PostTests
             Assert.That(((TestClass)result[0]!).Id, Is.EqualTo(1));
         });
     }
+
+    [Test]
+    public async Task CreateObjectFromFormUrlEncodedTest()
+    {
+        _testMethod = typeof(TestController).GetMethod("CreateObjectFromBody")!;
+        
+        var regex = RouteRegex();
+        _testMatch = regex.Match("/test");
+        
+        const string body = "name=John&message=Hello&id=1";
+        const string contentType = "application/x-www-form-urlencoded";
+        var bodyStream = new MemoryStream(Encoding.UTF8.GetBytes(body));
+        
+        var result = await RouteFunctions.ParseParametersForTesting(_testMethod, _testMatch, bodyStream, contentType);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(((TestClass)result[0]!).Name, Is.EqualTo("John"));
+            Assert.That(((TestClass)result[0]!).Message, Is.EqualTo("Hello"));
+            Assert.That(((TestClass)result[0]!).Id, Is.EqualTo(1));
+        });
+    }
     
     [GeneratedRegex(@"^\/test$")]
     private static partial Regex RouteRegex();

@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Reflection;
+using System.Web;
 
 namespace Jump.Parsers;
 
@@ -12,21 +13,20 @@ internal static class FormParser
 
         var parsedData = HttpUtility.ParseQueryString(formData);
 
-        var constructor = paramType.GetConstructors()[0]; 
+        var instance = Activator.CreateInstance(paramType);
+        
+        var properties = paramType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-        var parameters = constructor.GetParameters();
-        var constructorArgs = new object[parameters.Length];
-
-        for (var i = 0; i < parameters.Length; i++)
+        foreach (var property in properties)
         {
-            var paramName = parameters[i].Name!.ToLower();
-            if (parsedData[paramName] == null) continue;
-            
-            var value = parsedData[paramName];
-            constructorArgs[i] = Convert.ChangeType(value, parameters[i].ParameterType)!;
+            var fieldName = property.Name.ToLower();
+            if (parsedData[fieldName] == null) continue;
+
+            var value = Convert.ChangeType(parsedData[fieldName], property.PropertyType);
+            property.SetValue(instance, value);
         }
 
-        return constructor.Invoke(constructorArgs);
+        return instance;
     }
     
 }

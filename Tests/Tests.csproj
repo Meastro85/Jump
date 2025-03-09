@@ -25,4 +25,8 @@
       <ProjectReference Include="..\Jump\Jump.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Domains\" />
+    </ItemGroup>
+
 </Project>

@@ -5,7 +5,7 @@ using Tests.Interception_test_domain.Managers;
 
 namespace Tests.Unit_tests;
 
-public class InterceptionTest
+public class CacheTest
 {
 
     [SetUp]
